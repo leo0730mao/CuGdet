@@ -4,6 +4,7 @@ import string
 from db.db import conn
 from db import db
 from flask import request, redirect, session, url_for, render_template, make_response, Blueprint
+from views.homepage import all_records, add_record, adding_record
 
 login = Blueprint('login', __name__)
 letters = [s for s in string.ascii_lowercase]
