@@ -12,7 +12,7 @@ numbers = [str(i) for i in range(10)]
 
 
 @homepage.route('/all_records', methods=['GET', 'POST'])
-def records():
+def all_records():
     try:
         aid = request.cookies.get('aid')
     except:
@@ -22,7 +22,7 @@ def records():
 
 
 @homepage.route('/adding_record', methods=['GET', 'POST'])
-def add_record():
+def adding_record():
     try:
         aid = request.cookies.get('aid')
     except:

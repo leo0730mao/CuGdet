@@ -5,18 +5,17 @@ from db.db import conn
 from db import db
 from flask import request, redirect, session, url_for, render_template, make_response, Blueprint
 
-
 login = Blueprint('login', __name__)
 letters = [s for s in string.ascii_lowercase]
 numbers = [str(i) for i in range(10)]
 
 
 @login.route('/signin', methods=['GET', 'POST'])
-def login():
-    data = {"T1": {'username': request.form.get("username"), 'password': request.form.get("password")}}
+def sign_in():
+    data = {"T1": {'name': request.form.get("username"), 'pwd': request.form.get("password")}}
     res = db.select(conn, {'': ['Account']}, {"T1": ['aid']}, data)
     if len(res) != 0:
-        response = make_response(url_for('homepage/all_records'))
+        response = make_response(url_for('homepage.all_records'))
         response.set_cookie('aid', res[0]['aid'])
         return redirect(response)
     else:
@@ -40,6 +39,6 @@ def sign_up():
         data['aid'] = ''.join(random.choice(letters + numbers) for j in range(10))
 
     db.insert(conn, 'Account', data)
-    response = make_response(url_for('homepage'))
+    response = make_response(url_for('records'))
     response.set_cookie('aid', data['aid'])
     return redirect(response)

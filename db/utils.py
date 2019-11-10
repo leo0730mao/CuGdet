@@ -2,7 +2,7 @@ def condition_to_sql(condition):
     res = []
     for t in condition:
         for k in condition[t]:
-            res.append("%s.%s = '%s'" % (t, k, condition[k]))
+            res.append("%s.%s = '%s'" % (t, k, condition[t][k]))
     res = " AND ".join(res)
     return res
 
