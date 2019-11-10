@@ -11,7 +11,7 @@ letters = [s for s in string.ascii_lowercase]
 numbers = [str(i) for i in range(10)]
 
 
-@login.route('/signin', methods=['GET', 'POST'])
+@login.route('/sign_in', methods=['GET', 'POST'])
 def sign_in():
     data = {"T1": {'name': request.form.get("username"), 'pwd': request.form.get("password")}}
     res = db.select(conn, {'': ['Account']}, {"T1": ['aid']}, data)
@@ -20,15 +20,15 @@ def sign_in():
         response.set_cookie('aid', res[0]['aid'])
         return redirect(response)
     else:
-        return render_template('SignIn.html', msg = "error user name or password")
+        return render_template('/login/SignIn.html', msg = "error user name or password")
 
 
-@login.route('/tosignup', methods=['GET', 'POST'])
+@login.route('/to_sign_up', methods=['GET', 'POST'])
 def to_sign_up():
-    return render_template('SignUp.html')
+    return render_template('/login/SignUp.html')
 
 
-@login.route('/signup', methods=['GET', 'POST'])
+@login.route('/sign_up', methods=['GET', 'POST'])
 def sign_up():
     data = {'username': request.form.get("username"), 'password': request.form.get("password"),
             'email': request.form.get("email")}
