@@ -13,11 +13,11 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
 app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(days=7)
 
-app.register_blueprint(homepage, url_prefix='/homepage')
-app.register_blueprint(login, url_prefix='/login')
-app.register_blueprint(plans, url_prefix='/plans')
-app.register_blueprint(stat, url_prefix='/stat')
-app.register_blueprint(stocks, url_prefix='/stocks')
+app.register_blueprint(homepage)
+app.register_blueprint(login)
+app.register_blueprint(plans)
+app.register_blueprint(stat)
+app.register_blueprint(stocks)
 
 
 @app.route('/')
