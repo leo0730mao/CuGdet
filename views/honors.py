@@ -11,7 +11,6 @@ def all_honors():
         aid = request.cookies.get('aid')
     except:
         return redirect(url_for("login.sign_in"))
-    print(request.cookies)
     formed_aid = "'%s'" % (aid)
     sql = '''
     SELECT honors.name

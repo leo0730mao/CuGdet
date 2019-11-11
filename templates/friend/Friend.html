@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Friends
+{% endblock %}
+
+{% block MainContainer %}
+    <div class="container">
+        <div class="col-lg-8">
+            <form action="/add_friend" method="post">
+                Adding a new friend by name
+                <input type="hidden"
+                       name="type"
+                       value="name">
+                <input name="name" type="text">
+                <button type="submit">Add</button>
+            </form>
+            <form action="/add_friend" method="post">
+                Adding a new friend by mail
+                <input type="hidden"
+                       name="type"
+                       value="email">
+                <input name="email" type="text">
+                <button type="submit">Add</button>
+            </form>
+        </div>
+        <div class="col-lg-8">
+            {% for friend in friends%}
+            <table class="table">
+              <tbody>
+                <tr>
+                    <td>{{friend['name']}}</td>
+                    <td>{{friend['email']}}</td>
+                </tr>
+              </tbody>
+            </table>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}</html>

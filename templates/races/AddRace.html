@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Finding Teammate
+{% endblock %}
+
+{% block MainContainer %}
+    <div class="container">
+        For race: {{ name }}
+        <div class="col-lg-8">
+            {% for friend in friends%}
+            <table class="table">
+              <tbody>
+                <tr>
+                    <form action="add_race" method="post">
+                        <input type="hidden"
+                               name="rid"
+                               value={{rid}}>
+                        <input type="hidden"
+                               name="tid"
+                               value={{friend['tid']}}>
+                        <input name="name"
+                               value={{friend['name']}}>
+                        <button type="submit">Join</button>
+                    </form>
+                </tr>
+              </tbody>
+            </table>
+            {% endfor %}
+        </div>
+    </div>
+
+{% endblock %}
