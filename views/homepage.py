@@ -17,7 +17,7 @@ def all_records():
         aid = request.cookies.get('aid')
     except:
         return redirect(url_for("login.sign_in"))
-    records = db.select(conn, {"": ['records']}, "*", {"T1": {'aid': aid}})
+    records = db.select(conn, 'records', "*", {'aid': aid})
     return render_template("/homepage/HomePage.html", records = records)
 
 
@@ -46,7 +46,7 @@ def add_record():
     record['remark'] = request.form.get("remark")
     record['aid'] = request.cookies.get("aid")
 
-    reids = db.select(conn, {"": ['records']}, {"T1": ['reid']}, dict())
+    reids = db.select(conn, 'records', ['reid'], dict())
     reids = [t['reids'] for t in reids]
     record['reid'] = ''.join(random.choice(letters + numbers) for j in range(10))
     while record['reid'] in reids:
@@ -54,5 +54,5 @@ def add_record():
 
     db.insert(conn, 'records', record)
 
-    db.update(conn, "plans", {"-": {"credit": record['amt']}}, {"T1": {'aid': aid}})
+    db.update(conn, "plans", {"-": {"credit": record['amt']}}, {'aid': aid})
     return redirect('/homepage/HomePage.html')

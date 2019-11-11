@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Owned Plans
+{% endblock %}
+
+{% block MainContainer %}
+    <div class="container">
+
+        <div class="col-lg-8">
+            <form action="/delete_plans" method="post">
+                Id: {{profile['aid']}}}<br>
+                User Name: {{profile['name']}}} <input name="name" type="text"><br>
+                Password: {{profile['pwd']}}} <input name="password" type="text"><br>
+                Email: {{profile['email']}}} <input name="email" type="text"><br>
+                <button id="submit" type="submit">Modify</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

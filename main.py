@@ -8,7 +8,7 @@ from views.login import login
 from views.plans import plans
 from views.stat import stat
 from views.stocks import stocks
-
+from views.user import user
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -20,6 +20,8 @@ app.register_blueprint(plans)
 app.register_blueprint(stat)
 app.register_blueprint(stocks)
 app.register_blueprint(defaults)
+app.register_blueprint(user)
+
 
 @app.route('/')
 def index():

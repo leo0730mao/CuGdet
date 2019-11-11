@@ -51,7 +51,7 @@ def buy_stock():
         return redirect(url_for("login.sign_in"))
     data = {'aid': aid, 'sid': request.form.get('sid'), 'num': int(request.form.get('num')),
             'price': float(request.form.get('price'))}
-    tmp = db.select(conn, {"": ['own_stk']}, "*", {'T1': {'sid': data['sid'], 'aid': aid}})
+    tmp = db.select(conn, 'own_stk', "*", {'sid': data['sid'], 'aid': aid})
     if len(tmp) == 0:
         db.insert(conn, 'own_stk', data)
     else:

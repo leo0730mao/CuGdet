@@ -17,7 +17,7 @@ def own_plans():
         aid = request.cookies.get('aid')
     except:
         return redirect(url_for("login.sign_in"))
-    plans = db.select(conn, {"": ['plans']}, "*", {"T1": {'aid': aid}})
+    plans = db.select(conn, 'plans', "*", {'aid': aid})
     return render_template("/plans/OwnPlans.html", plans = plans)
 
 
@@ -39,7 +39,7 @@ def add_plans():
     plan = {'aid': aid, 'starting': request.form.get("starting"), 'ending': request.form.get("ending"),
             'cycle': request.form.get("cycle"), 'credit': request.form.get("budget"),
             'budget': request.form.get("budget")}
-    pids = db.select(conn, {"": ['plans']}, {"T1": ['pid']}, dict())
+    pids = db.select(conn, 'plans', ['pid'], dict())
     pids = set([t['pid'] for t in pids])
     plan['pid'] = ''.join(random.choice(letters+numbers) for j in range(10))
     while plan['pid'] in pids:

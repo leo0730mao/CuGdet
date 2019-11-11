@@ -11,5 +11,21 @@ def statistic():
     try:
         aid = request.cookies.get('aid')
     except:
-        return redirect("signin")
-    
+        return redirect(url_for("login.sign_in"))
+    data = dict()
+    sql = """select tag as x, COUNT(tag) as y from records where aid = '%s' group by tag;""" % aid
+    data['tag_num'] = db.special_select(sql)
+
+    sql = """select be_from as x, COUNT(be_from) as y from records where aid = '%s' group by be_from;""" % aid
+    data['source_num'] = db.special_select(sql)
+
+    sql = """select be_to as x, COUNT(be_to) as y from records where aid = '%s' group by be_to;""" % aid
+    data['receiver_num'] = db.special_select(sql)
+
+    sql = """select date_part('day', time) as x, SUM(amt) as y from records where aid = '%s' group by date_part('day', time);""" % aid
+    data['amt_daily'] = db.special_select(sql)
+
+    sql = """select date_part('month', time) as x, SUM(amt) as y from records where aid = '%s' group by date_part('month', time);""" % aid
+    data['amt_monthly'] = db.special_select(sql)
+
+    return render_template("/stat/Statistic.html", data = data)
