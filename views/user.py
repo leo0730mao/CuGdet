@@ -16,7 +16,7 @@ def profile():
         aid = request.cookies.get('aid')
     except:
         return redirect(url_for("login.sign_in"))
-    p = db.select(conn, 'account', "*", {'aid': aid})
+    p = db.select(conn, 'account', "*", {'aid': aid})[0]
     return render_template("/user/Profile.html", profile = p)
 
 
@@ -28,7 +28,7 @@ def modifying_profile():
         return redirect(url_for("login.sign_in"))
     account = dict()
     account['name'] = request.form.get("name")
-    account['password'] = request.form.get("password")
+    account['pwd'] = request.form.get("password")
     account['email'] = request.form.get("email")
-    db.update(conn, 'account', account, {'aid': aid})
+    db.update(conn, 'account', {"=": account}, {'aid': aid})
     return redirect(url_for("user.profile"))

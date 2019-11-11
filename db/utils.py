@@ -1,5 +1,6 @@
 from psycopg2.extras import RealDictCursor
 
+
 def condition_to_sql(condition):
     res = ["""%s = '%s'""" % (k, condition[k]) for k in condition]
     res = " AND ".join(res)
@@ -21,6 +22,7 @@ def values_to_sql(values):
         else:
             vals = ["%s = %s %s '%s'" % (k, k, t, values[t][k]) for k in values[t] if values[t][k] != ""]
     return ", ".join(vals)
+
 
 def valid_honor(conn, aid):
     formed_aid = "'%s'" % (aid)
