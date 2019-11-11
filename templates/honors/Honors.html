@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Honors
+{% endblock %}
+
+{% block MainContainer %}
+    <div class="container">
+        <div class="col-lg-8">
+            {% for honor in honors%}
+            <table class="table">
+              <tbody>
+                <tr>
+                  <td>{{honor['name']}}</td>
+                </tr>
+              </tbody>
+            </table>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}</html>

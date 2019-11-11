@@ -4,6 +4,10 @@ from flask import request, redirect, session, url_for, render_template, Blueprin
 
 from db.db import conn
 from db import db
+from db.utils import *
+
+
+from psycopg2.extras import RealDictCursor
 
 
 homepage = Blueprint('homepage', __name__)
@@ -48,11 +52,18 @@ def add_record():
 
     reids = db.select(conn, 'records', ['reid'], dict())
     reids = [t['reids'] for t in reids]
+
     record['reid'] = ''.join(random.choice(letters + numbers) for j in range(10))
     while record['reid'] in reids:
         record['reid'] = ''.join(random.choice(letters + numbers) for j in range(10))
 
     db.insert(conn, 'records', record)
 
+    # influence plans
     db.update(conn, "plans", {"-": {"credit": record['amt']}}, {'aid': aid})
-    return redirect('/homepage/HomePage.html')
+
+    # influence win_honor
+    valid_honor(conn, aid)
+
+    return redirect(url_for('homepage.all_records'))
+

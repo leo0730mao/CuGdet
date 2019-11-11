@@ -8,7 +8,11 @@ from views.login import login
 from views.plans import plans
 from views.stat import stat
 from views.stocks import stocks
+<<<<<<< HEAD
 from views.user import user
+=======
+from views.honors import honors
+>>>>>>> 825d8d5871d38c27acb279399ba5ca63c9cf2224
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.urandom(24)
@@ -21,6 +25,7 @@ app.register_blueprint(stat)
 app.register_blueprint(stocks)
 app.register_blueprint(defaults)
 app.register_blueprint(user)
+app.register_blueprint(honors)
 
 
 @app.route('/')
