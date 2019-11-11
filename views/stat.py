@@ -6,7 +6,7 @@ from flask import request, redirect, session, url_for, render_template, make_res
 stat = Blueprint('stat', __name__)
 
 
-@stat.route('/statistic', methods=['GET', 'POST'])
+@stat.route('/stat', methods=['GET', 'POST'])
 def statistic():
     try:
         aid = request.cookies.get('aid')

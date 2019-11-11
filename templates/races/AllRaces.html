@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}
+All Races
+{% endblock %}
+
+{% block MainContainer %}
+    <div class="container">
+        <div class="col-lg-8">
+            {% for race in races%}
+            <table class="table">
+              <tbody>
+                <tr>
+                    <td><form action="adding_race" method="post">
+                        <input type="hidden"
+                               name="rid"
+                               value={{race['rid']}}>
+                        <input name="name"
+                               value={{race['name']}}>
+                        <button type="submit">Find a teammate</button>
+                    </form></td>
+                </tr>
+              </tbody>
+            </table>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}</html>
