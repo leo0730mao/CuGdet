@@ -1,5 +1,6 @@
 import random
 import string
+import time
 
 from db import db
 from db.db import conn
@@ -17,7 +18,9 @@ def own_plans():
         aid = request.cookies.get('aid')
     except:
         return redirect(url_for("login.sign_in"))
-    plans = db.select(conn, 'plans', "*", {'aid': aid})
+    cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    sql = "select * from plans where aid = '%s' and ending < '%s';" % (aid, cur_time)
+    plans = db.special_select(sql)
     return render_template("/plans/OwnPlans.html", plans = plans)
 
 
