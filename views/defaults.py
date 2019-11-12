@@ -18,9 +18,7 @@ def own_defaults():
         aid = request.cookies.get('aid')
     except:
         return redirect(url_for("login.sign_in"))
-    cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    sql = "select * from defaults where aid = '%s' and ending < '%s';" % (aid, cur_time)
-    defaults = db.special_select(sql)
+    defaults = db.select(conn, 'defaults', "*", {'aid': aid})
     return render_template("/defaults/OwnDefaults.html", defaults = defaults)
 
 

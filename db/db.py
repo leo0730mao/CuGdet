@@ -75,6 +75,7 @@ def update(conn, table, new_values, condition):
 
 
 def special_select(sql):
+    print(sql)
     cur = conn.cursor(cursor_factory = RealDictCursor)
     try:
         cur.execute(sql)

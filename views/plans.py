@@ -18,9 +18,7 @@ def own_plans():
         aid = request.cookies.get('aid')
     except:
         return redirect(url_for("login.sign_in"))
-    cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    sql = "select * from plans where aid = '%s' and ending < '%s';" % (aid, cur_time)
-    plans = db.special_select(sql)
+    plans = db.select(conn, 'plans', "*", {'aid': aid})
     return render_template("/plans/OwnPlans.html", plans = plans)
 
 
