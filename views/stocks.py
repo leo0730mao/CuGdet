@@ -11,10 +11,17 @@ def stock_market():
     aid = request.cookies.get('aid')
     if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
-    sql = """select s.sid, s.name, s.type, s.info, c.price from (select * from stocks limit 100) as s INNER JOIN 
-    current_price as c on s.sid = c.sid;"""
+    page = request.form.get('page')
+    if page is None or page == "" or int(page) < 0:
+        page = 0
+    else:
+        page = int(page)
+    sql = """select s.sid, s.name, s.type, s.info, c.price from (select * from stocks order by sid limit 10 offset %s) as s INNER JOIN current_price as c on s.sid = c.sid;""" % (page * 10)
     all_stocks = db.special_select(sql)
-    return render_template("/stocks/StockMarket.html", all_stocks = all_stocks)
+
+    pre_page = max(0, page - 1)
+    nxt_page = page + 1
+    return render_template("/stocks/StockMarket.html", all_stocks = all_stocks, page = page, pre_page = pre_page, nxt_page = nxt_page)
 
 
 @stocks.route('/rec_stock', methods=['GET', 'POST'])

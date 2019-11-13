@@ -37,5 +37,13 @@ Stock Market
             </table>
             {% endfor %}
         </div>
+        <form action="/stock_market" method="post">
+            <input name="page" type="hidden" value={{pre_page}}>
+            <button id="pre_page" type="submit">Previous Page</button>
+        </form>
+        <form action="/stock_market" method="post">
+            <input name="page" type="hidden" value={{nxt_page}}>
+            <button id="nxt_page" type="submit">Next Page</button>
+        </form>
     </div>
 {% endblock %}
