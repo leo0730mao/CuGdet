@@ -25,6 +25,7 @@ def all_honors():
         return render_template("/honors/Honors.html", honors=honors)
     except:
         trans.rollback()
+        return redirect(url_for("all_honors"))
 
 @honors.route('/locked_honors', methods=['GET', 'POST'])
 def locked_honors():
@@ -49,3 +50,4 @@ def locked_honors():
         return render_template("/honors/LockedHonors.html", honors=honors)
     except:
         trans.rollback()
+        return redirect(url_for("all_honors"))

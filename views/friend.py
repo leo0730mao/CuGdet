@@ -44,16 +44,22 @@ def all_friends():
         friends = cur.fetchall()
         idx = range(len(friends))
         logs = []
+        transs = []
         for id in idx:
             sql_2 = get_log_out_time(friends[id]['aid'])
-            trans = conn.begin()
-            cur = conn.execute(sql_2)
-            trans.commit()
-            logs += cur.fetchall()
+            transs.append(conn.begin())
+            try:
+                cur = conn.execute(sql_2)
+                transs[-1].commit()
+                logs += cur.fetchall()
+            except:
+                transs[-1].rollback()
+                return redirect(url_for("all_friends"))
 
         return render_template("/friend/Friend.html", friends=friends, idx=idx, logs=logs)
     except:
         trans.rollback()
+        return redirect(url_for("all_friends"))
 
 
 @friend.route('/add_friend', methods=['GET', 'POST'])
