@@ -1,12 +1,26 @@
 import random
 import string
 import time
+from datetime import datetime
 from flask import request, redirect, session, url_for, render_template, Blueprint
 
 from db.db import conn
 from db import db
 from db.utils import *
-from additional_jobs import check_time
+
+
+def check_time(start_time, t, cycle):
+    days = {"week": 1, "month": 30, "quarter": 90, "half-year": 180, "year": 365}
+    start_time = start_time.split(" ")[0]
+    d1 = datetime.strptime(start_time, '%Y-%m-%d')
+    d2 = datetime.strptime(t, '%Y-%m-%d')
+    d3 = datetime.strptime(time.strftime("%Y-%m-%d", time.localtime()), '%Y-%m-%d')
+    interval1 = (d2 - d1).days
+    interval2 = (d3 - d1).days
+    if interval1 / days[cycle] == interval2 / days[cycle]:
+        return True
+    else:
+        return False
 
 
 homepage = Blueprint('homepage', __name__)
@@ -65,15 +79,15 @@ def add_record():
     if res is True:
         # influence plans
         if record['time'] == "":
-            cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, cur_time)
+            record_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
         else:
-            sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (
-            aid, record['time'])
+            record_time = record['time']
+        sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, record_time)
         plans = db.special_select(sql)
         for plan in plans:
-            new_credit = float(plan['credit']) + float(record['amt'])
-            db.update(conn, "plans", {"=": {'credit': new_credit}}, {'pid': plan['pid']})
+            if check_time(plan['starting'].strftime("%Y-%m-%d %H:%M:%S").split(" ")[0], record_time.split(" ")[0], plan['cycle']):
+                new_credit = float(plan['credit']) + float(record['amt'])
+                db.update(conn, "plans", {"=": {'credit': new_credit}}, {'pid': plan['pid']})
 
         # influence win_honor
         valid_honor(conn, aid)
@@ -95,14 +109,15 @@ def delete_record():
 
     # influence plans
     if t == "":
-        cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-        sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, cur_time)
+        record_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
     else:
-        sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, t)
+        record_time = t
+    sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, record_time)
     plans = db.special_select(sql)
     for plan in plans:
-        new_credit = float(plan['credit']) - old_amt
-        db.update(conn, "plans", {"=": {'credit': new_credit}}, {'pid': plan['pid']})
+        if check_time(plan['starting'].strftime("%Y-%m-%d %H:%M:%S").split(" ")[0], record_time.split(" ")[0], plan['cycle']):
+            new_credit = float(plan['credit']) - old_amt
+            db.update(conn, "plans", {"=": {'credit': new_credit}}, {'pid': plan['pid']})
 
     # influence win_honor
     valid_honor(conn, aid)
@@ -136,18 +151,18 @@ def modify_record():
     record['remark'] = request.form.get("remark")
 
     old_amt = float(request.form.get('old_amt'))
-
+    old_time = request.form.get('old_time')
     res = db.update(conn, 'records', {"=": record}, {'aid': aid})
     if res is True:
         # influence plans
         if record['time'] == "":
-            cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-            sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, cur_time)
+            record_time = old_time
         else:
-            sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, record['time'])
+            record_time = record['time']
+        sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, record_time)
         plans = db.special_select(sql)
         for plan in plans:
-            if record['amt'] != "":
+            if record['amt'] != "" and check_time(plan['starting'].strftime("%Y-%m-%d %H:%M:%S").split(" ")[0], record_time.split(" ")[0], plan['cycle']):
                 new_credit = plan['credit'] - old_amt + float(record['amt'])
                 db.update(conn, "plans", {"=": {'credit': new_credit}}, {'pid': plan['pid']})
 
