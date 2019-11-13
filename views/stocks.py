@@ -7,7 +7,7 @@ stocks = Blueprint('stocks', __name__)
 
 
 @stocks.route('/stock_market', methods=['GET', 'POST'])
-def stock_market(msg):
+def stock_market():
     aid = request.cookies.get('aid')
     if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
