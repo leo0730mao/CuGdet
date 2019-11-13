@@ -208,8 +208,28 @@ def add_race():
     print(sql)
     trans = conn.begin()
     try:
-        cur = conn.execute(sql)
+        conn.execute(sql)
         trans.commit()
+        sql_2 = '''
+            SELECT account.name as tname, races.rid, races.name 
+            FROM races, in_race, account
+            WHERE in_race.aid_1 = ''' + formed_aid + '''
+                  AND races.rid = in_race.rid
+                  AND in_race.aid_2 = account.aid
+            UNION
+            SELECT account.name as tname, races.rid, races.name
+            FROM races, in_race, account
+            WHERE in_race.aid_2 = ''' + formed_aid + '''
+                  AND races.rid = in_race.rid
+                  AND in_race.aid_2 = account.aid
+
+            '''
+        print(sql_2)
+        trans = conn.begin()
+        cur = conn.execute(sql_2)
+        trans.commit()
+        races = cur.fetchall()
+        return render_template("races/Races.html", races=races)
     except:
         trans.rollback()
-    return redirect(url_for("races.in_races"))
+        return redirect(url_for("races.in_races"))
