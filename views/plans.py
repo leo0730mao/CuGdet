@@ -1,6 +1,7 @@
 import random
 import string
 import time
+import datetime
 
 from db import db
 from db.db import conn
@@ -10,6 +11,18 @@ from flask import request, redirect, session, url_for, render_template, make_res
 plans = Blueprint('plans', __name__)
 letters = [s for s in string.ascii_lowercase]
 numbers = [str(i) for i in range(10)]
+
+
+def find_current_period(start_time, cycle):
+    days = {"week": 1, "month": 30, "quarter": 90, "half-year": 180, "year": 365}
+    cur = datetime.datetime.strptime(time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()), "%Y-%m-%d %H:%M:%S")
+    d1 = datetime.datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
+    interval = (cur - d1).days
+    p = interval / days[cycle]
+
+    begin = (d1 + datetime.timedelta(days = p * days[cycle])).strftime("%Y-%m-%d %H:%M:%S")
+    end = (d1 + datetime.timedelta(days = (p + 1) * days[cycle])).strftime("%Y-%m-%d %H:%M:%S")
+    return begin, end
 
 
 def to_valid_time(dt):
@@ -43,13 +56,17 @@ def add_plans():
     if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     plan = {'aid': aid, 'starting': to_valid_time(request.form.get("starting")), 'ending': to_valid_time(request.form.get("ending")),
-            'cycle': request.form.get("cycle"), 'credit': request.form.get("budget"),
-            'budget': request.form.get("budget")}
+            'cycle': request.form.get("cycle"), 'budget': request.form.get("budget")}
     pids = db.select(conn, 'plans', ['pid'], dict())
     pids = set([t['pid'] for t in pids])
     plan['pid'] = ''.join(random.choice(letters+numbers) for j in range(10))
     while plan['pid'] in pids:
         plan['pid'] = ''.join(random.choice(letters+numbers) for j in range(10))
+
+    begin, end = find_current_period(plan['starting'], plan['cycle'])
+    sql = """select SUM(amt) as total from records where aid = '%s' and time is not null and time >= '%s' and time <= '%s';""" % (aid, begin, end)
+    existed_amt = db.special_select(sql)[0]['total']
+    plan['credit'] = float(plan['budget']) - float(existed_amt)
 
     res = db.insert(conn, 'plans', plan)
     if res is True:
