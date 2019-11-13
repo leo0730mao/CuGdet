@@ -11,25 +11,47 @@ def all_friends():
         return redirect(url_for("login.sign_in"))
     formed_aid = "'%s'" % (aid)
     sql = '''
-    SELECT a2.name, a2.email
+    SELECT a2.aid, a2.name, a2.email
     FROM friend, account AS a1, account AS a2
     WHERE friend.aid_1 = a1.aid 
           AND a1.aid = ''' + formed_aid + ''' 
           AND friend.aid_2 = a2.aid
     UNION
-    SELECT a2.name, a2.email
+    SELECT a2.aid, a2.name, a2.email
     FROM friend, account AS a1, account AS a2
     WHERE friend.aid_2 = a1.aid 
           AND a1.aid = ''' + formed_aid + ''' 
           AND friend.aid_1 = a2.aid 
     '''
     print(sql)
+
+    def get_log_out_time(fid):
+        formed_fid = "'%s'" % (fid)
+        return '''
+    SELECT logs.time
+    FROM logs
+    WHERE logs.if_log_in = False
+          AND logs.time IS NOT NULL
+          AND logs.aid = ''' + formed_fid + '''
+    ORDER BY logs.time DESC 
+    LIMIT 1
+        '''
+    #sql_2 = get_log_out_time()
+    #print(sql_2)
     try:
         cur = conn.cursor(cursor_factory=RealDictCursor)
         cur.execute(sql)
         conn.commit()
         friends = cur.fetchall()
-        return render_template("/friend/Friend.html", friends=friends)
+        idx = range(len(friends))
+        logs = []
+        for id in idx:
+            sql_2 = get_log_out_time(friends[id]['aid'])
+            cur.execute(sql_2)
+            conn.commit()
+            logs += cur.fetchall()
+
+        return render_template("/friend/Friend.html", friends=friends, idx=idx, logs=logs)
     except:
         conn.rollback()
 
