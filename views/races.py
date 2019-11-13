@@ -123,6 +123,43 @@ def all_races():
     except:
         conn.rollback()
 
+@races.route('/hot_races', methods=['GET', 'POST'])
+def hot_races():
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
+        return redirect(url_for("login.sign_in"))
+    sql = '''
+    WITH race_count(rid, count, row_id) AS
+(SELECT r.rid, COUNT(*), ROW_NUMBER () OVER (ORDER BY COUNT(*) DESC)
+FROM in_race r INNER JOIN races rs on rs.rid = r.rid
+WHERE CURRENT_TIMESTAMP>=rs.starting AND (rs.ending IS NULL OR CURRENT_TIMESTAMP<rs.ending)
+GROUP BY r.rid
+ORDER BY COUNT(*) DESC)
+
+SELECT races.rid, races.name, race_count.count as participants
+FROM race_count, races
+WHERE race_count.row_id <= 10 AND race_count.rid = races.rid
+
+UNION
+
+SELECT races.rid, races.name, race_count.count as participants
+FROM race_count, races
+WHERE race_count.rid NOT IN (SELECT race_count.rid FROM race_count WHERE race_count.row_id=10) AND race_count.count IN (SELECT race_count.count FROM race_count WHERE race_count.row_id=10)
+AND race_count.rid=races.rid
+
+ORDER BY 
+participants DESC
+'''
+    print(sql)
+    try:
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute(sql)
+        conn.commit()
+        races = cur.fetchall()
+        return render_template("/races/HotRaces.html", races=races)
+    except:
+        conn.rollback()
+
 @races.route('/adding_race', methods=['GET', 'POST'])
 def adding_race():
     aid = request.cookies.get('aid')
