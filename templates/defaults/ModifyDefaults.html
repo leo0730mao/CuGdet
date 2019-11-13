@@ -8,6 +8,7 @@ Modifing Default
     <div class="container">
         <div class="col-lg-8">
             <form action="/modify_defaults" method="post">
+                <input name="did" type="hidden" value={{default['did']}}>
                 Name: {{default['name']}} <input name="name" type="text"><br>
                 Source: {{default['be_from']}} <input name="be_from" type="text"><br>
                 Receiver: {{default['be_to']}} <input name="be_to" type="text"><br>
@@ -19,6 +20,7 @@ Modifing Default
                 Tag: {{default['tag']}} <input name="tag" type="text"><br>
                 <button type="submit">Modify</button>
             </form>
+            {{msg}}
         </div>
     </div>
 {% endblock %}

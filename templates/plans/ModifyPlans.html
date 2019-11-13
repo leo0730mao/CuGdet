@@ -8,6 +8,7 @@ Modifing Plan
     <div class="container">
         <div class="col-lg-8">
             <form action="/modify_plans" method="post">
+                <input name="pid" type="hidden" value={{plan['pid']}}>
                 Starting from: {{plan['starting']}}<input name="starting" type="text"><br>
                 Ending from: {{plan['ending']}}<input name="ending" type="text"><br>
                 Cycle: {{plan['cycle']}}<input name="cycle" type="text"><br>
@@ -16,6 +17,7 @@ Modifing Plan
                 <input name="old_credit" type="hidden" value={{plan['credit']}}>
                 <button type="submit">Modify</button>
             </form>
+            {{msg}}
         </div>
     </div>
 {% endblock %}

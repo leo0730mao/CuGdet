@@ -8,6 +8,7 @@ Modifing Record
     <div class="container">
         <div class="col-lg-8">
             <form action="/modify_record" method="post">
+                <input name="reid" type="hidden" value={{record['reid']}}>
                 Name: {{record['name']}}<input name="name" type="text"><br>
                 Source: {{record['be_from']}}<input name="be_from" type="text"><br>
                 Receiver: {{record['be_to']}}<input name="be_to" type="text"><br>
@@ -18,6 +19,7 @@ Modifing Record
                 <input name="old_amt" type="hidden" value={{record['amt']}}>
                 <button type="submit">Modify</button>
             </form>
+            {{msg}}
         </div>
     </div>
 {% endblock %}

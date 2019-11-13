@@ -51,15 +51,17 @@ def add_record():
     while record['reid'] in reids:
         record['reid'] = ''.join(random.choice(letters + numbers) for j in range(10))
 
-    db.insert(conn, 'records', record)
+    res = db.insert(conn, 'records', record)
+    if res is True:
+        # influence plans
+        db.update(conn, "plans", {"-": {"credit": record['amt']}}, {'aid': aid})
 
-    # influence plans
-    db.update(conn, "plans", {"-": {"credit": record['amt']}}, {'aid': aid})
+        # influence win_honor
+        valid_honor(conn, aid)
 
-    # influence win_honor
-    valid_honor(conn, aid)
-
-    return redirect(url_for('homepage.all_records'))
+        return redirect(url_for('homepage.all_records'))
+    else:
+        render_template("/homepage/AddingRecord.html", msg = "illegal values")
 
 
 @homepage.route('/delete_record', methods = ['GET', 'POST'])
@@ -95,6 +97,7 @@ def modify_record():
     if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     record = dict()
+    reid = request.form.get("reid")
     record['name'] = request.form.get("name")
     record['be_from'] = request.form.get("be_from")
     record['be_to'] = request.form.get("be_to")
@@ -105,12 +108,15 @@ def modify_record():
 
     old_amt = request.form.get('old_amt')
 
-    db.update(conn, "plans", {"+": {"credit": old_amt}}, {'aid': aid})
-    db.update(conn, 'account', {"=": record}, {'aid': aid})
-    db.update(conn, "plans", {"-": {"credit": record['amt']}}, {'aid': aid})
+    res = db.update(conn, 'account', {"=": record}, {'aid': aid})
+    if res is True:
+        db.update(conn, "plans", {"+": {"credit": old_amt}}, {'aid': aid})
+        db.update(conn, "plans", {"-": {"credit": record['amt']}}, {'aid': aid})
 
-    # influence win_honor
-    valid_honor(conn, aid)
+        # influence win_honor
+        valid_honor(conn, aid)
 
-    return redirect(url_for(".all_records"))
-
+        return redirect(url_for(".all_records"))
+    else:
+        record = db.select(conn, "records", "*", {'reid': reid})
+        return render_template("/homepage/ModifyRecord.html", record = record, msg = "illegal value")

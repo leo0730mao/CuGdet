@@ -24,7 +24,14 @@ def select(conn, table, columns, condition, special = ""):
     try:
         cur = conn.execute(sql)
         trans.commit()
-        return cur.fetchall()
+        tmp = cur.fetchall()
+        res = []
+        for row in tmp:
+            tmp_row = dict()
+            for col in row._keymap.keys():
+                tmp_row[col] = row[col]
+            res.append(tmp_row)
+        return res
     except:
         trans.rollback()
         return None

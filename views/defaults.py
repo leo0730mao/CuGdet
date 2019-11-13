@@ -44,8 +44,12 @@ def add_defaults():
     default['did'] = ''.join(random.choice(letters + numbers) for j in range(10))
     while default['did'] in dids:
         default['did'] = ''.join(random.choice(letters + numbers) for j in range(10))
-    db.insert(conn, 'defaults', default)
-    return redirect(url_for(".own_defaults"))
+
+    res = db.insert(conn, 'defaults', default)
+    if res is True:
+        return redirect(url_for(".own_defaults"))
+    else:
+        return render_template("/defaults/AddingDefaults.html", msg = "illegal value")
 
 
 @defaults.route('/delete_defaults', methods = ['GET', 'POST'])
@@ -73,6 +77,7 @@ def modify_defaults():
     if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     default = dict()
+    did = request.form.get("did")
     default['name'] = request.form.get("name")
     default['be_from'] = request.form.get("be_from")
     default['be_to'] = request.form.get("be_to")
@@ -83,6 +88,9 @@ def modify_defaults():
     default['tag'] = request.form.get("tag")
     default['remark'] = request.form.get("remark")
 
-    db.update(conn, 'defaults', {"=": default}, {'aid': aid})
-
-    return redirect(url_for(".own_defaults"))
+    res = db.update(conn, 'defaults', {"=": default}, {'aid': aid})
+    if res is False:
+        default = db.select(conn, "defaults", "*", {'did': did})
+        return render_template("/defaults/ModifyDefaults.html", default = default, msg = "illegal value")
+    else:
+        return redirect(url_for(".own_defaults"))

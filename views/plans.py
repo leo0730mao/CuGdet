@@ -42,8 +42,12 @@ def add_plans():
     plan['pid'] = ''.join(random.choice(letters+numbers) for j in range(10))
     while plan['pid'] in pids:
         plan['pid'] = ''.join(random.choice(letters+numbers) for j in range(10))
-    db.insert(conn, 'plans', plan)
-    return redirect(url_for(".own_plans"))
+
+    res = db.insert(conn, 'plans', plan)
+    if res is True:
+        return redirect(url_for(".own_plans"))
+    else:
+        render_template("/plans/AddingPlan.html", msg = "illegal value")
 
 
 @plans.route('/delete_plans', methods=['GET', 'POST'])
@@ -71,6 +75,7 @@ def modify_plans():
     if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     plan = dict()
+    pid = request.form.get("pid")
     plan['starting'] = request.form.get("starting")
     plan['ending'] = request.form.get("ending")
     plan['cycle'] = request.form.get("cycle")
@@ -80,6 +85,9 @@ def modify_plans():
     old_credit = float(request.form.get("old_credit"))
     plan['credit'] = float(plan['budget']) - (old_budget - old_credit)
 
-    db.update(conn, 'plans', {"=": plan}, {'aid': aid})
-
-    return redirect(url_for(".own_plans"))
+    res = db.update(conn, 'plans', {"=": plan}, {'aid': aid})
+    if res is False:
+        plan = db.select(conn, "plans", "*", {'pid': pid})
+        return render_template("/plans/ModifyPlans.html", plan = plan, msg = "illegal value")
+    else:
+        return redirect(url_for(".own_plans"))

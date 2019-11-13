@@ -36,9 +36,11 @@ def predict_total_amt(data, daily = True):
     for item in data:
         res += float(item['y'])
     res /= len(data)
+    t = time.strftime("%Y-%m-%d", time.localtime()).split("-")
+    month = t[1]
     if daily:
         month_day = {'1': 31, '2': 28, '3': 31, '4': 30, '5': 31, '6': 30, '7': 31, '8': 31, '9': 30, '10': 31, '11': 30, '12': 31}
-        nxt_t = (int(data[-1]['x']) + 1) % month_day[str(int(data[-1]['x']))]
+        nxt_t = (int(data[-1]['x']) + 1) % month_day[month]
         if nxt_t == 0:
             nxt_t = month_day[str(int(data[-1]['x']))]
     else:
