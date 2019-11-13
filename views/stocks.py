@@ -8,9 +8,8 @@ stocks = Blueprint('stocks', __name__)
 
 @stocks.route('/stock_market', methods=['GET', 'POST'])
 def stock_market():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     sql = """select s.sid, s.name, s.type, s.info, c.price from (select * from stocks limit 100) as s INNER JOIN 
     current_price as c on s.sid = c.sid;"""
@@ -20,9 +19,8 @@ def stock_market():
 
 @stocks.route('/rec_stock', methods=['GET', 'POST'])
 def rec_stock():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     sql = """select s.sid, s.name, s.type, s.info, c.price from (select * from rec_stk where aid = 
     '%s') as r INNER JOIN stocks as s on r.sid = s.sid INNER JOIN current_price as c on s.sid = c.sid;""" % aid
@@ -32,9 +30,8 @@ def rec_stock():
 
 @stocks.route('/own_stock', methods=['GET', 'POST'])
 def own_stock():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     sql = """select s.sid, s.name, s.type, s.info, c.price as cur_price, o.price as old_price, o.num as num from (select * from 
     own_stk where aid = '%s') as o INNER JOIN stocks as s on o.sid = s.sid INNER JOIN current_price as c on 
