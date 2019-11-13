@@ -12,17 +12,19 @@ def in_races():
         return redirect(url_for("login.sign_in"))
     formed_aid = "'%s'" % (aid)
     sql = '''
-    SELECT account.name as tname, races.name 
+    SELECT account.name as tname, races.rid, races.name 
     FROM races, in_race, account
     WHERE in_race.aid_1 = ''' + formed_aid + '''
           AND races.rid = in_race.rid
           AND in_race.aid_2 = account.aid
     UNION
-    SELECT account.name as tname, races.name
+    SELECT account.name as tname, races.rid, races.name
     FROM races, in_race, account
     WHERE in_race.aid_2 = ''' + formed_aid + '''
           AND races.rid = in_race.rid
-          AND in_race.aid_2 = account.aid'''
+          AND in_race.aid_2 = account.aid
+    
+    '''
     print(sql)
     try:
         cur = conn.cursor(cursor_factory=RealDictCursor)
@@ -32,6 +34,13 @@ def in_races():
         return render_template("/races/Races.html", races=races)
     except:
         conn.rollback()
+
+@races.route('/race_rank', methods=['GET', 'POST'])
+def race_rank():
+    try:
+        aid = request.cookies.get('aid')
+    except:
+        return redirect(url_for("login.sign_in"))
 
 @races.route('/all_races', methods=['GET', 'POST'])
 def all_races():

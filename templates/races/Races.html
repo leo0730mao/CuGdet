@@ -12,7 +12,12 @@ Races
               <tbody>
                 <tr>
                     <td>{{race['tname']}}</td>
-                    <td>{{race['name']}}</td>
+                    <form action="race_rank" method="post">
+                        <input type="hidden"
+                               name="rid"
+                               value={{race['rid']}}>
+                        <button type="submit">{{race['name']}}</button>
+                    </form>
                 </tr>
               </tbody>
             </table>
