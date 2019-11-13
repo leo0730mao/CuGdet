@@ -49,12 +49,6 @@ def sign_up():
     while data['aid'] in aids:
         data['aid'] = ''.join(random.choice(letters + numbers) for j in range(10))
 
-<<<<<<< HEAD
-    db.insert(conn, 'Account', data)
-    response = make_response(url_for('records'))
-    response.set_cookie('aid', data['aid'])
-    return redirect(response)
-=======
     res = db.insert(conn, 'account', data)
     if res is True:
         sids = db.select(conn, "stocks", "*", dict())
@@ -87,4 +81,3 @@ def sign_out():
     db.insert(conn, 'logs', log)
 
     return resp
->>>>>>> af74eb5e04cda07b649439da9831dd48acd28d0d
