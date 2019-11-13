@@ -7,9 +7,8 @@ honors = Blueprint('honors', __name__)
 
 @honors.route('/all_honors', methods=['GET', 'POST'])
 def all_honors():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     formed_aid = "'%s'" % (aid)
     sql = '''

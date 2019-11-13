@@ -6,9 +6,8 @@ races = Blueprint('races', __name__)
 
 @races.route('/in_races', methods=['GET', 'POST'])
 def in_races():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     formed_aid = "'%s'" % (aid)
     sql = '''
@@ -35,9 +34,8 @@ def in_races():
 
 @races.route('/all_races', methods=['GET', 'POST'])
 def all_races():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     sql = '''
     SELECT races.rid, races.name
@@ -55,9 +53,8 @@ def all_races():
 
 @races.route('/adding_race', methods=['GET', 'POST'])
 def adding_race():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     formed_aid = "'%s'" % (aid)
     rid = request.form.get("rid")
@@ -88,9 +85,8 @@ def adding_race():
 
 @races.route('/add_race', methods=['GET', 'POST'])
 def add_race():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     formed_aid = "'%s'" % (aid)
     tid = "'%s'" % request.form.get("tid")

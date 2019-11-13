@@ -44,6 +44,25 @@ Home Page
                   <td>Remark</td>
                   <td>{{record['remark']}}</td>
                 </tr>
+                <tr>
+                  <td>Delete</td>
+                  <td>
+                      <form action="/delete_record" method="post">
+                          <input name="reid" type="hidden" value={{record['reid']}}>
+                          <input name="old_amt" type="hidden" value={{record['amt']}}>
+                          <button id="delete" type="submit">Delete</button>
+                      </form>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Modify</td>
+                  <td>
+                      <form action="/modifing_record" method="post">
+                          <input name="reid" type="hidden" value={{record['reid']}}>
+                          <button id="modify" type="submit">Modify</button>
+                      </form>
+                  </td>
+                </tr>
               </tbody>
             </table>
             {% endfor %}

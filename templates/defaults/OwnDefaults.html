@@ -57,7 +57,16 @@ Owned Defaults
                   <td>
                       <form action="/delete_defaults" method="post">
                           <input name="did" type="hidden" value={{default['did']}}>
-                          <button id="submit" type="submit">Delete</button>
+                          <button id="delete" type="submit">Delete</button>
+                      </form>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Modify</td>
+                  <td>
+                      <form action="/modifing_defaults" method="post">
+                          <input name="did" type="hidden" value={{default['did']}}>
+                          <button id="modify" type="submit">Modify</button>
                       </form>
                   </td>
                 </tr>

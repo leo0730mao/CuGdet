@@ -12,9 +12,8 @@ numbers = [str(i) for i in range(10)]
 
 @user.route('/profile', methods=['GET', 'POST'])
 def profile():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     p = db.select(conn, 'account', "*", {'aid': aid})[0]
     return render_template("/user/Profile.html", profile = p)
@@ -22,9 +21,8 @@ def profile():
 
 @user.route('/modify_profile', methods=['GET', 'POST'])
 def modifying_profile():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     account = dict()
     account['name'] = request.form.get("name")

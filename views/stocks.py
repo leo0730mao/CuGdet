@@ -45,9 +45,8 @@ def own_stock():
 
 @stocks.route('/buy_stock', methods=['GET', 'POST'])
 def buy_stock():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     data = {'aid': aid, 'sid': request.form.get('sid'), 'num': int(request.form.get('num')),
             'price': float(request.form.get('price'))}
@@ -63,9 +62,8 @@ def buy_stock():
 
 @stocks.route('/sell_stock', methods=['GET', 'POST'])
 def sell_stock():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     sid = request.form.get('sid')
     old_price = float(request.form.get('old_price'))

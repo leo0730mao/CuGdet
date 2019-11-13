@@ -14,9 +14,8 @@ numbers = [str(i) for i in range(10)]
 
 @defaults.route('/own_defaults', methods = ['GET', 'POST'])
 def own_defaults():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     defaults = db.select(conn, 'defaults', "*", {'aid': aid})
     return render_template("/defaults/OwnDefaults.html", defaults = defaults)
@@ -24,18 +23,16 @@ def own_defaults():
 
 @defaults.route('/adding_defaults', methods = ['GET', 'POST'])
 def adding_defaults():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     return render_template("/defaults/AddingDefaults.html")
 
 
 @defaults.route('/add_defaults', methods = ['GET', 'POST'])
 def add_defaults():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     default = {'aid': aid, 'name': request.form.get("name"), 'be_from': request.form.get("be_from"),
                'be_to': request.form.get("be_to"),
@@ -53,9 +50,39 @@ def add_defaults():
 
 @defaults.route('/delete_defaults', methods = ['GET', 'POST'])
 def delete_defaults():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     db.delete(conn, 'defaults', {'did': request.form.get('did')})
+    return redirect(url_for(".own_defaults"))
+
+
+@defaults.route('/modifing_defaults', methods = ['GET', 'POST'])
+def modifing_defaults():
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
+        return redirect(url_for("login.sign_in"))
+    did = request.form.get("did")
+    default = db.select(conn, "defaults", "*", {'did': did})[0]
+    return render_template("/defaults/ModifyDefaults.html", default = default)
+
+
+@defaults.route('/modify_defaults', methods=['GET', 'POST'])
+def modify_defaults():
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
+        return redirect(url_for("login.sign_in"))
+    default = dict()
+    default['name'] = request.form.get("name")
+    default['be_from'] = request.form.get("be_from")
+    default['be_to'] = request.form.get("be_to")
+    default['amt'] = request.form.get("amt")
+    default['starting'] = request.form.get("starting")
+    default['ending'] = request.form.get("ending")
+    default['cycle'] = request.form.get("cycle")
+    default['tag'] = request.form.get("tag")
+    default['remark'] = request.form.get("remark")
+
+    db.update(conn, 'defaults', {"=": default}, {'aid': aid})
+
     return redirect(url_for(".own_defaults"))

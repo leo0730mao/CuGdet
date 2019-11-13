@@ -8,9 +8,8 @@ stat = Blueprint('stat', __name__)
 
 @stat.route('/statistic', methods=['GET', 'POST'])
 def statistic():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     data = dict()
     sql = """select tag as x, COUNT(tag) as y from records where aid = '%s' group by tag;""" % aid

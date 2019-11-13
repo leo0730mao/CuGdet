@@ -17,9 +17,8 @@ numbers = [str(i) for i in range(10)]
 
 @homepage.route('/all_records', methods=['GET', 'POST'])
 def all_records():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     records = db.select(conn, 'records', "*", {'aid': aid}, special = "ORDER BY time DESC")
     return render_template("/homepage/HomePage.html", records = records)
@@ -27,19 +26,17 @@ def all_records():
 
 @homepage.route('/adding_record', methods=['GET', 'POST'])
 def adding_record():
-    try:
-        aid = request.cookies.get('aid')
-    except:
-        return redirect("signin")
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
+        return redirect(url_for("login.sign_in"))
     return render_template("/homepage/AddingRecord.html")
 
 
 @homepage.route('/add_record', methods=['GET', 'POST'])
 def add_record():
-    try:
-        aid = request.cookies.get('aid')
-    except:
-        return redirect("signin")
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
+        return redirect(url_for("login.sign_in"))
     record = dict()
     record['name'] = request.form.get("name")
     record['be_from'] = request.form.get("be_from")
@@ -66,4 +63,57 @@ def add_record():
     valid_honor(conn, aid)
 
     return redirect(url_for('homepage.all_records'))
+
+
+@homepage.route('/delete_record', methods = ['GET', 'POST'])
+def delete_record():
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
+        return redirect(url_for("login.sign_in"))
+
+    old_amt = request.form.get('old_amt')
+
+    db.update(conn, "plans", {"+": {"credit": old_amt}}, {'aid': aid})
+    db.delete(conn, 'records', {'reid': request.form.get('reid')})
+
+    # influence win_honor
+    valid_honor(conn, aid)
+
+    return redirect(url_for(".all_records"))
+
+
+@homepage.route('/modifing_record', methods = ['GET', 'POST'])
+def modifing_record():
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
+        return redirect(url_for("login.sign_in"))
+    reid = request.form.get("reid")
+    record = db.select(conn, "records", "*", {'reid': reid})[0]
+    return render_template("/homepage/ModifyRecord.html", record = record)
+
+
+@homepage.route('/modify_record', methods=['GET', 'POST'])
+def modify_record():
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
+        return redirect(url_for("login.sign_in"))
+    record = dict()
+    record['name'] = request.form.get("name")
+    record['be_from'] = request.form.get("be_from")
+    record['be_to'] = request.form.get("be_to")
+    record['amt'] = request.form.get("amt")
+    record['time'] = request.form.get("time")
+    record['tag'] = request.form.get("tag")
+    record['remark'] = request.form.get("remark")
+
+    old_amt = request.form.get('old_amt')
+
+    db.update(conn, "plans", {"+": {"credit": old_amt}}, {'aid': aid})
+    db.update(conn, 'account', {"=": record}, {'aid': aid})
+    db.update(conn, "plans", {"-": {"credit": record['amt']}}, {'aid': aid})
+
+    # influence win_honor
+    valid_honor(conn, aid)
+
+    return redirect(url_for(".all_records"))
 

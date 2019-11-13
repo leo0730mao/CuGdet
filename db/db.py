@@ -26,9 +26,10 @@ def select(conn, table, columns, condition, special = ""):
     try:
         cur.execute(sql)
         conn.commit()
+        return cur.fetchall()
     except:
         conn.rollback()
-    return cur.fetchall()
+        return None
 
 
 def insert(conn, table, data):
@@ -45,8 +46,10 @@ def insert(conn, table, data):
     try:
         cur.execute(sql)
         conn.commit()
+        return True
     except:
         conn.rollback()
+        return False
 
 
 def delete(conn, table, condition):
@@ -57,8 +60,10 @@ def delete(conn, table, condition):
     try:
         cur.execute(sql)
         conn.commit()
+        return True
     except:
         conn.rollback()
+        return False
 
 
 def update(conn, table, new_values, condition):
@@ -70,8 +75,10 @@ def update(conn, table, new_values, condition):
     try:
         cur.execute(sql)
         conn.commit()
+        return True
     except:
         conn.rollback()
+        return False
 
 
 def special_select(sql):
@@ -80,9 +87,10 @@ def special_select(sql):
     try:
         cur.execute(sql)
         conn.commit()
+        return cur.fetchall()
     except:
         conn.rollback()
-    return cur.fetchall()
+        return None
 
 
 conn = connect(name = "proj1part2", usr = "yl4323", host = "35.243.220.243", pwd = "2262")

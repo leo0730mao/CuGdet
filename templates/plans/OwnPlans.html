@@ -41,7 +41,16 @@ Owned Plans
                   <td>
                       <form action="/delete_plans" method="post">
                           <input name="pid" type="hidden" value={{plan['pid']}}>
-                          <button id="submit" type="submit">Delete</button>
+                          <button id="delete" type="submit">Delete</button>
+                      </form>
+                  </td>
+                </tr>
+                <tr>
+                  <td>Modify</td>
+                  <td>
+                      <form action="/modifing_plans" method="post">
+                          <input name="pid" type="hidden" value={{plan['pid']}}>
+                          <button id="modify" type="submit">Modify</button>
                       </form>
                   </td>
                 </tr>

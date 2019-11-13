@@ -6,9 +6,8 @@ friend = Blueprint('friend', __name__)
 
 @friend.route('/all_friends', methods=['GET', 'POST'])
 def all_friends():
-    try:
-        aid = request.cookies.get('aid')
-    except:
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
     formed_aid = "'%s'" % (aid)
     sql = '''
@@ -37,10 +36,9 @@ def all_friends():
 
 @friend.route('/add_friend', methods=['GET', 'POST'])
 def add_friend():
-    try:
-        aid = request.cookies.get('aid')
-    except:
-        return redirect("signin")
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
+        return redirect(url_for("login.sign_in"))
     type = request.form.get("type")
     value = "'%s'" % (request.form.get(type))
     formed_aid = "'%s'" % (aid)

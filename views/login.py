@@ -14,7 +14,7 @@ numbers = [str(i) for i in range(10)]
 def sign_in():
     data = {'name': request.form.get("username"), 'pwd': request.form.get("password")}
     res = db.select(conn, 'account', ['aid'], data)
-    if len(res) != 0:
+    if res is not None and len(res) != 0:
         log = dict()
         lids = db.select(conn, 'logs', ['lid'], dict())
         lids = set([t['lid'] for t in lids])
@@ -49,7 +49,35 @@ def sign_up():
     while data['aid'] in aids:
         data['aid'] = ''.join(random.choice(letters + numbers) for j in range(10))
 
-    db.insert(conn, 'account', data)
-    response = make_response(url_for('homepage'))
-    response.set_cookie('aid', data['aid'])
-    return redirect(response)
+    res = db.insert(conn, 'account', data)
+    if res is True:
+        sids = db.select(conn, "stocks", "*", dict())
+        random.seed(time.time())
+        rec_stk = random.sample(sids, 10)
+        for stk in rec_stk:
+            db.insert(conn, "rec_stk", {'aid': data['aid'], 'sid': stk['sid']})
+        resp = make_response(redirect(url_for("homepage.all_records")))
+        resp.set_cookie('aid', data['aid'])
+        return resp
+    else:
+        return render_template('/login/SignUp.html', msg = "name or email duplicate")
+
+
+@login.route('/sign_out', methods=['GET', 'POST'])
+def sign_out():
+    resp = make_response(redirect(url_for(".sign_in")))
+    aid = request.cookies.get('aid')
+    resp.delete_cookie('aid')
+
+    log = dict()
+    lids = db.select(conn, 'logs', ['lid'], dict())
+    lids = set([t['lid'] for t in lids])
+    log['lid'] = ''.join(random.choice(letters + numbers) for j in range(10))
+    while log['lid'] in lids:
+        log['lid'] = ''.join(random.choice(letters + numbers) for j in range(10))
+    log['if_log_in'] = False
+    log['time'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    log['aid'] = aid
+    db.insert(conn, 'logs', log)
+
+    return resp

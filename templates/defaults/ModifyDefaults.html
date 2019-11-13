@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Modifing Default
+{% endblock %}
+
+{% block MainContainer %}
+    <div class="container">
+        <div class="col-lg-8">
+            <form action="/modify_defaults" method="post">
+                Name: {{default['name']}} <input name="name" type="text"><br>
+                Source: {{default['be_from']}} <input name="be_from" type="text"><br>
+                Receiver: {{default['be_to']}} <input name="be_to" type="text"><br>
+                Starting from: {{default['starting']}} <input name="starting" type="text"><br>
+                Ending from: {{default['ending']}} <input name="ending" type="text"><br>
+                Cycle: {{default['cycle']}} <input name="cycle" type="text"><br>
+                Amount: {{default['amt']}} <input name="amt" type="text"><br>
+                Remark: {{default['remark']}} <input name="remark" type="text"><br>
+                Tag: {{default['tag']}} <input name="tag" type="text"><br>
+                <button type="submit">Modify</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
