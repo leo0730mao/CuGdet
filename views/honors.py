@@ -26,3 +26,27 @@ def all_honors():
         return render_template("/honors/Honors.html", honors=honors)
     except:
         conn.rollback()
+
+@honors.route('/locked_honors', methods=['GET', 'POST'])
+def locked_honors():
+    aid = request.cookies.get('aid')
+    if aid is None or aid == "":
+        return redirect(url_for("login.sign_in"))
+    formed_aid = "'%s'" % (aid)
+    sql = '''
+    SELECT honors.name
+    FROM honors
+    EXCEPT
+    SELECT honors.name
+    FROM honors, win_honor
+    WHERE honors.hid = win_honor.hid 
+          AND win_honor.aid = ''' + formed_aid
+    print(sql)
+    try:
+        cur = conn.cursor(cursor_factory=RealDictCursor)
+        cur.execute(sql)
+        conn.commit()
+        honors = cur.fetchall()
+        return render_template("/honors/LockedHonors.html", honors=honors)
+    except:
+        conn.rollback()
