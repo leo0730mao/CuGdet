@@ -12,6 +12,14 @@ letters = [s for s in string.ascii_lowercase]
 numbers = [str(i) for i in range(10)]
 
 
+def to_valid_time(dt):
+    if dt is None or dt == "":
+        return dt
+    dt = dt.split("T")
+    dt[1] += ":00"
+    return " ".join(dt)
+
+
 @defaults.route('/own_defaults', methods = ['GET', 'POST'])
 def own_defaults():
     aid = request.cookies.get('aid')
@@ -36,7 +44,7 @@ def add_defaults():
         return redirect(url_for("login.sign_in"))
     default = {'aid': aid, 'name': request.form.get("name"), 'be_from': request.form.get("be_from"),
                'be_to': request.form.get("be_to"),
-               'starting': request.form.get("starting"), 'ending': request.form.get("ending"),
+               'starting': to_valid_time(request.form.get("starting")), 'ending': to_valid_time(request.form.get("ending")),
                'cycle': request.form.get("cycle"), 'amt': request.form.get("amt"),
                'remark': request.form.get("remark"), 'tag': request.form.get("tag")}
     dids = db.select(conn, 'defaults', ['did'], dict())
@@ -82,8 +90,8 @@ def modify_defaults():
     default['be_from'] = request.form.get("be_from")
     default['be_to'] = request.form.get("be_to")
     default['amt'] = request.form.get("amt")
-    default['starting'] = request.form.get("starting")
-    default['ending'] = request.form.get("ending")
+    default['starting'] = to_valid_time(request.form.get("starting"))
+    default['ending'] = to_valid_time(request.form.get("ending"))
     default['cycle'] = request.form.get("cycle")
     default['tag'] = request.form.get("tag")
     default['remark'] = request.form.get("remark")

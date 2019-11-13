@@ -1,15 +1,25 @@
 import random
 import string
+import time
 from flask import request, redirect, session, url_for, render_template, Blueprint
 
 from db.db import conn
 from db import db
 from db.utils import *
+from additional_jobs import check_time
 
 
 homepage = Blueprint('homepage', __name__)
 letters = [s for s in string.ascii_lowercase]
 numbers = [str(i) for i in range(10)]
+
+
+def to_valid_time(dt):
+    if dt is None or dt == "":
+        return dt
+    dt = dt.split("T")
+    dt[1] += ":00"
+    return " ".join(dt)
 
 
 @homepage.route('/all_records', methods=['GET', 'POST'])
@@ -40,7 +50,7 @@ def add_record():
     record['be_to'] = request.form.get("be_to")
     record['amt'] = request.form.get("amt")
     record['tag'] = request.form.get("tag")
-    record['time'] = request.form.get("time")
+    record['time'] = to_valid_time(request.form.get("time"))
     record['remark'] = request.form.get("remark")
     record['aid'] = request.cookies.get("aid")
 
@@ -54,14 +64,23 @@ def add_record():
     res = db.insert(conn, 'records', record)
     if res is True:
         # influence plans
-        db.update(conn, "plans", {"-": {"credit": record['amt']}}, {'aid': aid})
+        if record['time'] == "":
+            cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, cur_time)
+        else:
+            sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (
+            aid, record['time'])
+        plans = db.special_select(sql)
+        for plan in plans:
+            new_credit = float(plan['credit']) + float(record['amt'])
+            db.update(conn, "plans", {"=": {'credit': new_credit}}, {'pid': plan['pid']})
 
         # influence win_honor
         valid_honor(conn, aid)
 
         return redirect(url_for('homepage.all_records'))
     else:
-        render_template("/homepage/AddingRecord.html", msg = "illegal values")
+        return render_template("/homepage/AddingRecord.html", msg = "illegal values")
 
 
 @homepage.route('/delete_record', methods = ['GET', 'POST'])
@@ -70,10 +89,20 @@ def delete_record():
     if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
 
-    old_amt = request.form.get('old_amt')
-
-    db.update(conn, "plans", {"+": {"credit": old_amt}}, {'aid': aid})
+    old_amt = float(request.form.get('old_amt'))
+    t = request.form.get('time')
     db.delete(conn, 'records', {'reid': request.form.get('reid')})
+
+    # influence plans
+    if t == "":
+        cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, cur_time)
+    else:
+        sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, t)
+    plans = db.special_select(sql)
+    for plan in plans:
+        new_credit = float(plan['credit']) - old_amt
+        db.update(conn, "plans", {"=": {'credit': new_credit}}, {'pid': plan['pid']})
 
     # influence win_honor
     valid_honor(conn, aid)
@@ -102,16 +131,25 @@ def modify_record():
     record['be_from'] = request.form.get("be_from")
     record['be_to'] = request.form.get("be_to")
     record['amt'] = request.form.get("amt")
-    record['time'] = request.form.get("time")
+    record['time'] = to_valid_time(request.form.get("time"))
     record['tag'] = request.form.get("tag")
     record['remark'] = request.form.get("remark")
 
-    old_amt = request.form.get('old_amt')
+    old_amt = float(request.form.get('old_amt'))
 
-    res = db.update(conn, 'account', {"=": record}, {'aid': aid})
+    res = db.update(conn, 'records', {"=": record}, {'aid': aid})
     if res is True:
-        db.update(conn, "plans", {"+": {"credit": old_amt}}, {'aid': aid})
-        db.update(conn, "plans", {"-": {"credit": record['amt']}}, {'aid': aid})
+        # influence plans
+        if record['time'] == "":
+            cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+            sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, cur_time)
+        else:
+            sql = """select * from plans where aid = '%s' and (ending > '%s' or ending is null);""" % (aid, record['time'])
+        plans = db.special_select(sql)
+        for plan in plans:
+            if record['amt'] != "":
+                new_credit = plan['credit'] - old_amt + float(record['amt'])
+                db.update(conn, "plans", {"=": {'credit': new_credit}}, {'pid': plan['pid']})
 
         # influence win_honor
         valid_honor(conn, aid)

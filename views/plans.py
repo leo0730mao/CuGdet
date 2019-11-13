@@ -12,6 +12,14 @@ letters = [s for s in string.ascii_lowercase]
 numbers = [str(i) for i in range(10)]
 
 
+def to_valid_time(dt):
+    if dt is None or dt == "":
+        return dt
+    dt = dt.split("T")
+    dt[1] += ":00"
+    return " ".join(dt)
+
+
 @plans.route('/own_plans', methods=['GET', 'POST'])
 def own_plans():
     aid = request.cookies.get('aid')
@@ -34,7 +42,7 @@ def add_plans():
     aid = request.cookies.get('aid')
     if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
-    plan = {'aid': aid, 'starting': request.form.get("starting"), 'ending': request.form.get("ending"),
+    plan = {'aid': aid, 'starting': to_valid_time(request.form.get("starting")), 'ending': to_valid_time(request.form.get("ending")),
             'cycle': request.form.get("cycle"), 'credit': request.form.get("budget"),
             'budget': request.form.get("budget")}
     pids = db.select(conn, 'plans', ['pid'], dict())
@@ -47,7 +55,7 @@ def add_plans():
     if res is True:
         return redirect(url_for(".own_plans"))
     else:
-        render_template("/plans/AddingPlan.html", msg = "illegal value")
+        return render_template("/plans/AddingPlan.html", msg = "illegal value")
 
 
 @plans.route('/delete_plans', methods=['GET', 'POST'])
@@ -76,8 +84,8 @@ def modify_plans():
         return redirect(url_for("login.sign_in"))
     plan = dict()
     pid = request.form.get("pid")
-    plan['starting'] = request.form.get("starting")
-    plan['ending'] = request.form.get("ending")
+    plan['starting'] = to_valid_time(request.form.get("starting"))
+    plan['ending'] = to_valid_time(request.form.get("ending"))
     plan['cycle'] = request.form.get("cycle")
     plan['budget'] = request.form.get("budget")
 

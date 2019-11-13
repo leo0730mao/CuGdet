@@ -24,9 +24,19 @@ def check_time(start_time, cycle):
         return False
 
 
+def check_plans():
+    cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+    sql = "select * from plans where ending > '%s' or ending is null;" % cur_time
+    plans = db.special_select(sql)
+    for plan in plans:
+        if check_time(plan['starting'], plan['cycle']):
+            plan['credit'] = plan['budget']
+            db.update(conn, "plans", plan, {'pid': plan['pid']})
+
+
 def check_defaults():
     cur_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
-    sql = "select * from defaults where ending < '%s';" % cur_time
+    sql = "select * from defaults where ending > '%s' or ending is null;" % cur_time
     defaults = db.special_select(sql)
     for default in defaults:
         if check_time(default['starting'], default['cycle']):
@@ -62,6 +72,7 @@ def make_rec_stk():
 
 
 if __name__ == '__main__':
+    schedule.every().day.at("00:00").do(check_plans)
     schedule.every().day.at("00:00").do(check_defaults)
     schedule.every().day.at("00:00").do(make_rec_stk)
     while True:

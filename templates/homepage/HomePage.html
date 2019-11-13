@@ -50,6 +50,7 @@ Home Page
                       <form action="/delete_record" method="post">
                           <input name="reid" type="hidden" value={{record['reid']}}>
                           <input name="old_amt" type="hidden" value={{record['amt']}}>
+                          <input name="time" type="hidden" value={{record['time']}}>
                           <button id="delete" type="submit">Delete</button>
                       </form>
                   </td>
