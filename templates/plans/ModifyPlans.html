@@ -9,10 +9,10 @@ Modifing Plan
         <div class="col-lg-8">
             <form action="/modify_plans" method="post">
                 <input name="pid" type="hidden" value={{plan['pid']}}>
-                Starting from: {{plan['starting']}}<input name="starting" type="text"><br>
-                Ending from: {{plan['ending']}}<input name="ending" type="text"><br>
+                Starting from: {{plan['starting']}}<input name="starting" type="datetime-local"><br>
+                Ending from: {{plan['ending']}}<input name="ending" type="datetime-local"><br>
                 Cycle: {{plan['cycle']}}<input name="cycle" type="text"><br>
-                Budget: {{plan['budget']}}<input name="budget" type="text"><br>
+                Budget: {{plan['budget']}}<input name="budget" type="number" min="0"><br>
                 <input name="old_budget" type="hidden" value={{plan['budget']}}>
                 <input name="old_credit" type="hidden" value={{plan['credit']}}>
                 <button type="submit">Modify</button>

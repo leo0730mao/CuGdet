@@ -28,7 +28,7 @@ Recommended Stocks
                       <form action="/buy_stock" method="post">
                           <input name="sid" type="hidden" value={{stock['sid']}}>
                           <input name="price" type="hidden" value={{stock['price']}}>
-                          number: <input name="num" type="text">
+                          number: <input name="num" type="number" min="1">
                           <button id="submit" type="submit">buy</button>
                       </form>
                   </td>

@@ -12,9 +12,9 @@ Modifing Record
                 Name: {{record['name']}}<input name="name" type="text"><br>
                 Source: {{record['be_from']}}<input name="be_from" type="text"><br>
                 Receiver: {{record['be_to']}}<input name="be_to" type="text"><br>
-                Amount: {{record['amt']}}<input name="amt" type="text"><br>
+                Amount: {{record['amt']}}<input name="amt" type="number"><br>
                 Tag: {{record['tag']}}<input name="tag" type="text"><br>
-                Time: {{record['time']}}<input name="time" type="text"><br>
+                Time: {{record['time']}}<input name="time" type="datetime-local"><br>
                 Remark: {{record['remark']}}<input name="remark" type="text"><br>
                 <input name="old_amt" type="hidden" value={{record['amt']}}>
                 <button type="submit">Modify</button>
