@@ -25,12 +25,13 @@ Friends
             </form>
         </div>
         <div class="col-lg-8">
-            {% for friend in friends%}
+            {% for id in idx%}
             <table class="table">
               <tbody>
                 <tr>
-                    <td>{{friend['name']}}</td>
-                    <td>{{friend['email']}}</td>
+                    <td>{{friends[id]['name']}}</td>
+                    <td>{{friends[id]['email']}}</td>
+                    <td>{{logs[id]['time']}}</td>
                 </tr>
               </tbody>
             </table>
