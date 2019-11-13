@@ -20,7 +20,7 @@ def in_races():
     FROM races, in_race, account
     WHERE in_race.aid_2 = ''' + formed_aid + '''
           AND races.rid = in_race.rid
-          AND in_race.aid_2 = account.aid
+          AND in_race.aid_1 = account.aid
     
     '''
     print(sql)
@@ -32,6 +32,7 @@ def in_races():
         return render_template("/races/Races.html", races=races)
     except:
         trans.rollback()
+        return redirect(url_for('in_races'))
 
 @races.route('/race_rank', methods=['GET', 'POST'])
 def race_rank():
@@ -95,14 +96,17 @@ def race_rank():
         cur = conn.execute(sql)
         trans.commit()
         ranking = cur.fetchall()
-        trans = conn.begin()
-        cur = conn.execute(sql_2)
-        my_ranking = cur.fetchall()
-        trans.commit()
-        return render_template("/races/RaceRank.html", ranking=ranking, my_ranking=my_ranking, rname=rname)
+        trans_2 = conn.begin()
+        try:
+            cur = conn.execute(sql_2)
+            my_ranking = cur.fetchall()
+            trans_2.commit()
+            return render_template("/races/RaceRank.html", ranking=ranking, my_ranking=my_ranking, rname=rname)
+        except:
+            trans_2.rollback()
     except:
         trans.rollback()
-        return redirect(url_for("races.in_races"))
+    return redirect(url_for("races.in_races"))
 
 @races.route('/all_races', methods=['GET', 'POST'])
 def all_races():
@@ -122,6 +126,7 @@ def all_races():
         return render_template("/races/AllRaces.html", races=races)
     except:
         trans.rollback()
+        return redirect(url_for('all_races'))
 
 @races.route('/hot_races', methods=['GET', 'POST'])
 def hot_races():
@@ -159,6 +164,7 @@ participants DESC
         return render_template("/races/HotRaces.html", races=races)
     except:
         trans.rollback()
+        return redirect(url_for('hot_races'))
 
 @races.route('/adding_race', methods=['GET', 'POST'])
 def adding_race():
@@ -167,6 +173,7 @@ def adding_race():
         return redirect(url_for("login.sign_in"))
     formed_aid = "'%s'" % (aid)
     rid = request.form.get("rid")
+    formed_rid = "'%s'" % (rid)
     name = request.form.get('name')
     sql = '''
         SELECT a2.name, a2.aid AS tid
@@ -180,6 +187,20 @@ def adding_race():
         WHERE friend.aid_2 = a1.aid 
               AND a1.aid = ''' + formed_aid + ''' 
               AND friend.aid_1 = a2.aid 
+        EXCEPT
+        (SELECT account.name as name, account.aid AS tid 
+    FROM races, in_race, account
+    WHERE in_race.aid_1 = ''' + formed_aid + '''
+          AND races.rid = in_race.rid
+          AND races.rid = ''' + formed_rid + '''
+          AND in_race.aid_2 = account.aid
+    UNION
+    SELECT account.name as name, account.aid AS tid
+    FROM races, in_race, account
+    WHERE in_race.aid_2 = ''' + formed_aid + '''
+          AND races.rid = in_race.rid
+          AND races.rid = ''' + formed_rid + '''
+          AND in_race.aid_1 = account.aid)
         '''
     print(sql)
     trans = conn.begin()
@@ -210,6 +231,7 @@ def add_race():
     try:
         conn.execute(sql)
         trans.commit()
+
         sql_2 = '''
             SELECT account.name as tname, races.rid, races.name 
             FROM races, in_race, account
@@ -221,15 +243,19 @@ def add_race():
             FROM races, in_race, account
             WHERE in_race.aid_2 = ''' + formed_aid + '''
                   AND races.rid = in_race.rid
-                  AND in_race.aid_2 = account.aid
+                  AND in_race.aid_1 = account.aid
 
             '''
         print(sql_2)
-        trans = conn.begin()
-        cur = conn.execute(sql_2)
-        trans.commit()
-        races = cur.fetchall()
-        return render_template("races/Races.html", races=races)
+        trans_2 = conn.begin()
+        try:
+            cur = conn.execute(sql_2)
+            trans_2.commit()
+            races = cur.fetchall()
+            return render_template("races/Races.html", races=races)
+        except:
+            trans_2.rollback()
+            return redirect(url_for('races.in_races'))
     except:
         trans.rollback()
         return redirect(url_for("races.in_races"))
