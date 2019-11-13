@@ -7,9 +7,6 @@ from db import db
 from db.utils import *
 
 
-from psycopg2.extras import RealDictCursor
-
-
 homepage = Blueprint('homepage', __name__)
 letters = [s for s in string.ascii_lowercase]
 numbers = [str(i) for i in range(10)]

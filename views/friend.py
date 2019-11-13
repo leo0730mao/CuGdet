@@ -1,6 +1,5 @@
 from db.db import conn
 from flask import request, redirect, session, url_for, render_template, make_response, Blueprint
-from psycopg2.extras import RealDictCursor
 
 friend = Blueprint('friend', __name__)
 
@@ -38,22 +37,23 @@ def all_friends():
         '''
     #sql_2 = get_log_out_time()
     #print(sql_2)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
         friends = cur.fetchall()
         idx = range(len(friends))
         logs = []
         for id in idx:
             sql_2 = get_log_out_time(friends[id]['aid'])
-            cur.execute(sql_2)
-            conn.commit()
+            trans = conn.begin()
+            cur = conn.execute(sql_2)
+            trans.commit()
             logs += cur.fetchall()
 
         return render_template("/friend/Friend.html", friends=friends, idx=idx, logs=logs)
     except:
-        conn.rollback()
+        trans.rollback()
 
 
 @friend.route('/add_friend', methods=['GET', 'POST'])
@@ -73,11 +73,11 @@ def add_friend():
               AND a2.''' + type + '''=''' + value + '''
     '''
     print(sql)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        conn.execute(sql)
+        trans.commit()
     except:
-        conn.rollback()
+        trans.rollback()
     return redirect('all_friends')
 

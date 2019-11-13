@@ -1,6 +1,5 @@
 from db.db import conn
 from flask import request, redirect, session, url_for, render_template, make_response, Blueprint
-from psycopg2.extras import RealDictCursor
 
 races = Blueprint('races', __name__)
 
@@ -25,14 +24,14 @@ def in_races():
     
     '''
     print(sql)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
         races = cur.fetchall()
         return render_template("/races/Races.html", races=races)
     except:
-        conn.rollback()
+        trans.rollback()
 
 @races.route('/race_rank', methods=['GET', 'POST'])
 def race_rank():
@@ -91,17 +90,18 @@ def race_rank():
 
         """
     print(sql_2)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
         ranking = cur.fetchall()
-        cur.execute(sql_2)
+        trans = conn.begin()
+        cur = conn.execute(sql_2)
         my_ranking = cur.fetchall()
-        conn.commit()
+        trans.commit()
         return render_template("/races/RaceRank.html", ranking=ranking, my_ranking=my_ranking, rname=rname)
     except:
-        conn.rollback()
+        trans.rollback()
         return redirect(url_for("races.in_races"))
 
 @races.route('/all_races', methods=['GET', 'POST'])
@@ -114,14 +114,14 @@ def all_races():
     FROM races
     '''
     print(sql)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
         races = cur.fetchall()
         return render_template("/races/AllRaces.html", races=races)
     except:
-        conn.rollback()
+        trans.rollback()
 
 @races.route('/hot_races', methods=['GET', 'POST'])
 def hot_races():
@@ -151,14 +151,14 @@ ORDER BY
 participants DESC
 '''
     print(sql)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
         races = cur.fetchall()
         return render_template("/races/HotRaces.html", races=races)
     except:
-        conn.rollback()
+        trans.rollback()
 
 @races.route('/adding_race', methods=['GET', 'POST'])
 def adding_race():
@@ -182,14 +182,14 @@ def adding_race():
               AND friend.aid_1 = a2.aid 
         '''
     print(sql)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
         friends = cur.fetchall()
         return render_template("/races/AddRace.html", friends=friends, rid=rid, name=name)
     except:
-        conn.rollback()
+        trans.rollback()
         return redirect(url_for("races.all_races"))
 
 @races.route('/add_race', methods=['GET', 'POST'])
@@ -206,10 +206,10 @@ def add_race():
         VALUES (''' + data + ''')
         '''
     print(sql)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
     except:
-        conn.rollback()
+        trans.rollback()
     return redirect(url_for("races.in_races"))

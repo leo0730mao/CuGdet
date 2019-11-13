@@ -1,7 +1,6 @@
 from db import db
 from db.db import conn
 from flask import request, redirect, session, url_for, render_template, make_response, Blueprint
-from psycopg2.extras import RealDictCursor
 
 honors = Blueprint('honors', __name__)
 
@@ -18,14 +17,14 @@ def all_honors():
           AND win_honor.aid = ''' + formed_aid
 
     print(sql)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
         honors = cur.fetchall()
         return render_template("/honors/Honors.html", honors=honors)
     except:
-        conn.rollback()
+        trans.rollback()
 
 @honors.route('/locked_honors', methods=['GET', 'POST'])
 def locked_honors():
@@ -42,11 +41,11 @@ def locked_honors():
     WHERE honors.hid = win_honor.hid 
           AND win_honor.aid = ''' + formed_aid
     print(sql)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
         honors = cur.fetchall()
         return render_template("/honors/LockedHonors.html", honors=honors)
     except:
-        conn.rollback()
+        trans.rollback()
