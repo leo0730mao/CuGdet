@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block title %}
-All Races
+Hot Races
 {% endblock %}
 
 {% block MainContainer %}
@@ -12,12 +12,13 @@ All Races
               <tbody>
                 <tr>
                     <td>{{race['name']}}</td>
+                    <td>{{race['participants']}}</td>
                     <td><form action="adding_race" method="post">
                         <input type="hidden"
                                name="rid"
                                value={{race['rid']}}>
                         <input type="hidden"
-                               name="name"
+                                name="name"
                                value={{race['name']}}>
                         <button type="submit">Find a teammate</button>
                     </form></td>
