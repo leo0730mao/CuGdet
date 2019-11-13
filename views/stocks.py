@@ -21,7 +21,7 @@ def stock_market():
 
     pre_page = max(0, page - 1)
     nxt_page = page + 1
-    return render_template("/stocks/StockMarket.html", all_stocks = all_stocks, page = page, pre_page = pre_page, nxt_page = nxt_page, msg = msg)
+    return render_template("/stocks/StockMarket.html", all_stocks = all_stocks, page = page, pre_page = pre_page, nxt_page = nxt_page)
 
 
 @stocks.route('/rec_stock', methods=['GET', 'POST'])
