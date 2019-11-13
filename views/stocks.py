@@ -7,7 +7,7 @@ stocks = Blueprint('stocks', __name__)
 
 
 @stocks.route('/stock_market', methods=['GET', 'POST'])
-def stock_market():
+def stock_market(msg):
     aid = request.cookies.get('aid')
     if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
@@ -21,7 +21,7 @@ def stock_market():
 
     pre_page = max(0, page - 1)
     nxt_page = page + 1
-    return render_template("/stocks/StockMarket.html", all_stocks = all_stocks, page = page, pre_page = pre_page, nxt_page = nxt_page)
+    return render_template("/stocks/StockMarket.html", all_stocks = all_stocks, page = page, pre_page = pre_page, nxt_page = nxt_page, msg = msg)
 
 
 @stocks.route('/rec_stock', methods=['GET', 'POST'])
@@ -54,6 +54,8 @@ def buy_stock():
         return redirect(url_for("login.sign_in"))
     data = {'aid': aid, 'sid': request.form.get('sid'), 'num': int(request.form.get('num')),
             'price': float(request.form.get('price'))}
+    if data['num'] == "":
+        return redirect(url_for(".stock_market"))
     tmp = db.select(conn, 'own_stk', "*", {'sid': data['sid'], 'aid': aid})
     if len(tmp) == 0:
         db.insert(conn, 'own_stk', data)
@@ -74,6 +76,8 @@ def sell_stock():
     cur_price = float(request.form.get('cur_price'))
     sell_num = int(request.form.get('sell_num'))
     num = int(request.form.get('num'))
+    if num == "":
+        return redirect(url_for(".stock_market"))
     if sell_num >= num:
         db.delete(conn, 'own_stk', {'aid': aid, 'sid': request.form.get('sid')})
     else:
