@@ -3,7 +3,7 @@ import time
 import random
 import string
 
-import db.db
+from db import db
 from db.db import conn
 from datetime import datetime
 
@@ -49,8 +49,21 @@ def check_defaults():
             db.insert(conn, 'records', record)
 
 
+def make_rec_stk():
+    aids = db.select(conn, "account", ["aid"], dict())
+    aids = [t['aid'] for t in aids]
+    for user in aids:
+        db.delete(conn, 'rec_stk', {'aid': user})
+        sids = db.select(conn, "stocks", "*", dict())
+        random.seed(time.time())
+        rec_stk = random.sample(sids, 10)
+        for stk in rec_stk:
+            db.insert(conn, "rec_stk", {'aid': user, 'sid': stk['sid']})
+
+
 if __name__ == '__main__':
     schedule.every().day.at("00:00").do(check_defaults)
+    schedule.every().day.at("00:00").do(make_rec_stk)
     while True:
         schedule.run_pending()
         time.sleep(1)

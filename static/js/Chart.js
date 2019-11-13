@@ -1,15 +1,32 @@
-function drawBar(id, data) {
+function drawBar(id, data, label, monthly) {
     var ctx = document.getElementById(id);
+    var myDate = new Date();
+    var year = myDate.getFullYear();
+    var month = myDate.getMonth();
+    var day = myDate.getDate();
     var labels = [];
-    for (var i = 0; i < data.length; i++){
-        labels.push(data[i]['x']);
+    var values = [];
+    var i = 1;
+    var upbound = 0;
+    if (monthly) upbound = month + 1;
+    else upbound = day;
+    while (i <= upbound){
+        labels.push(i);
+        values.push(0);
+        i++;
     }
+    for (var j = 0; j < data.length - 1; j++){
+        values[parseInt(data[j]['x']) - 1] = data[j]['y'];
+    }
+    labels.push(data[data.length - 1]['x']);
+    values.push(data[data.length - 1]['y']);
     var myChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: labels,
             datasets: [{
-                data: data,
+                label: label,
+                data: values,
                 backgroundColor: "rgba(14,72,100,1)",
                 strokeColor: "black",
                 borderWidth: 1
@@ -72,4 +89,40 @@ function drawPie(id, data) {
             }]
         }
     });
+}
+function drawLine(id, data) {
+    var ctx = document.getElementById(id);
+    var labels = [];
+    var values = [];
+    var i = 1;
+    while (i < 32 && i <= parseInt(data[data.length - 1]['x'])){
+        labels.push(i);
+        values.push(0);
+        i++;
+    }
+    for (var j = 0; j < data.length; j++){
+        values[parseInt(data[j]['x']) - 1] = data[j]['y'];
+    }
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            label: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: "rgba(14,72,100,1)",
+                strokeColor: "black",
+                borderWidth: 1
+            }],
+            options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero:true
+                    }
+                }]
+            }
+        }
+        }
+    });
+
 }

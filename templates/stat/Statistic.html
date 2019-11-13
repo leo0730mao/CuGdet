@@ -33,8 +33,8 @@ Statistic
             drawPie("tag_num", data['tag_num']);
             drawPie("source_num", data['source_num']);
             drawPie("receiver_num", data['receiver_num']);
-            drawBar("amt_daily", data['amt_daily']);
-            drawBar("amt_monthly", data['amt_monthly']);
+            drawBar("amt_daily", data['amt_daily'], "# of total amount of daily records", false);
+            drawBar("amt_monthly", data['amt_monthly'], "# of total amount of monthly records", true);
         </script>
     </div>
 {% endblock %}
