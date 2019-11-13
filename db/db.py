@@ -104,4 +104,4 @@ def special_select(sql):
         return None
 
 
-conn = connect(name = "proj1part2", usr = "yl4323", host = "35.243.220.243", pwd = "2262")
+conn = connect(name = "proj1part2", usr = "yl4323", host = "0.0.0.0", pwd = "2262")  # 35.243.220.243
