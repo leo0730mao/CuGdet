@@ -1,4 +1,3 @@
-from psycopg2.extras import RealDictCursor
 
 
 def condition_to_sql(condition):
@@ -39,9 +38,9 @@ def valid_honor(conn, aid):
     HAVING CASE WHEN honors.type = 'beq' THEN SUM(records.amt) >= honors.amt ELSE SUM(records.amt) <= honors.amt END; 
     '''
     print(sql)
+    trans = conn.begin()
     try:
-        cur = conn.cursor(cursor_factory=RealDictCursor)
-        cur.execute(sql)
-        conn.commit()
+        conn.execute(sql)
+        trans.commit()
     except:
-        conn.rollback()
+        trans.rollback()

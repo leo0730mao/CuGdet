@@ -1,12 +1,11 @@
-import psycopg2
-from psycopg2.extras import RealDictCursor
+from sqlalchemy import create_engine
 
 from db.utils import condition_to_sql, columns_to_sql, values_to_sql
 
 
 def connect(name, usr, host, pwd):
     try:
-        conn = psycopg2.connect("dbname='%s' user='%s' host='%s' password='%s'" % (name, usr, host, pwd))
+        conn = create_engine("postgres://%s:%s@%s/%s" % (usr, pwd, host, name)).connect()
         return conn
     except:
         print("fail to build connection")
@@ -14,8 +13,6 @@ def connect(name, usr, host, pwd):
 
 
 def select(conn, table, columns, condition, special = ""):
-    cur = conn.cursor(cursor_factory = RealDictCursor)
-
     cond_sql = condition_to_sql(condition)
     if cond_sql == "":
         sql = """SELECT %s FROM %s %s;""" % (
@@ -23,17 +20,17 @@ def select(conn, table, columns, condition, special = ""):
     else:
         sql = """SELECT %s FROM %s WHERE %s %s;""" % (columns_to_sql(columns), table, cond_sql, special)
     print(sql)
+    trans = conn.begin()
     try:
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
         return cur.fetchall()
     except:
-        conn.rollback()
+        trans.rollback()
         return None
 
 
 def insert(conn, table, data):
-    cur = conn.cursor(cursor_factory = RealDictCursor)
 
     cols = ",".join([t for t in data.keys() if data[t] != ""])
     cols = "(%s)" % cols
@@ -43,53 +40,53 @@ def insert(conn, table, data):
 
     sql = "INSERT INTO %s %s VALUES %s;" % (table, cols, vals)
     print(sql)
+    trans = conn.begin()
     try:
-        cur.execute(sql)
-        conn.commit()
+        conn.execute(sql)
+        trans.commit()
         return True
     except:
-        conn.rollback()
+        trans.rollback()
         return False
 
 
 def delete(conn, table, condition):
-    cur = conn.cursor(cursor_factory = RealDictCursor)
 
     sql = "DELETE FROM %s WHERE %s;" % (table, condition_to_sql(condition))
     print(sql)
+    trans = conn.begin()
     try:
-        cur.execute(sql)
-        conn.commit()
+        conn.execute(sql)
+        trans.commit()
         return True
     except:
-        conn.rollback()
+        trans.rollback()
         return False
 
 
 def update(conn, table, new_values, condition):
-    cur = conn.cursor(cursor_factory = RealDictCursor)
-
     vals = values_to_sql(new_values)
     sql = "UPDATE %s SET %s WHERE %s;" % (table, vals, condition_to_sql(condition))
     print(sql)
+    trans = conn.begin()
     try:
-        cur.execute(sql)
-        conn.commit()
+        conn.execute(sql)
+        trans.commit()
         return True
     except:
-        conn.rollback()
+        trans.rollback()
         return False
 
 
 def special_select(sql):
     print(sql)
-    cur = conn.cursor(cursor_factory = RealDictCursor)
+    trans = conn.begin()
     try:
-        cur.execute(sql)
-        conn.commit()
+        cur = conn.execute(sql)
+        trans.commit()
         return cur.fetchall()
     except:
-        conn.rollback()
+        trans.rollback()
         return None
 
 
