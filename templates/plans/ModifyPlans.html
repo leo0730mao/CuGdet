@@ -11,7 +11,13 @@ Modifing Plan
                 <input name="pid" type="hidden" value={{plan['pid']}}>
                 Starting from: {{plan['starting']}}<input name="starting" type="datetime-local"><br>
                 Ending from: {{plan['ending']}}<input name="ending" type="datetime-local"><br>
-                Cycle: {{plan['cycle']}}<input name="cycle" type="text"><br>
+                Cycle: {{plan['cycle']}}<select name="cycle">
+                            <option value ="week">week</option>
+                            <option value ="month">month</option>
+                            <option value="quarter">quarter</option>
+                            <option value="half-year">half-year</option>
+                            <option value="year">year</option>
+                        </select><br>
                 Budget: {{plan['budget']}}<input name="budget" type="number" min="0"><br>
                 <input name="old_budget" type="hidden" value={{plan['budget']}}>
                 <input name="old_credit" type="hidden" value={{plan['credit']}}>

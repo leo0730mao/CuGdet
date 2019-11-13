@@ -13,7 +13,13 @@ Adding Defaults
                 Receiver: <input name="be_to" type="text"><br>
                 Starting from: <input name="starting" type="datetime-local"><br>
                 Ending from: <input name="ending" type="datetime-local"><br>
-                Cycle: <input name="cycle" type="text"><br>
+                Cycle: <select name="cycle">
+                            <option value ="week">week</option>
+                            <option value ="month">month</option>
+                            <option value="quarter">quarter</option>
+                            <option value="half-year">half-year</option>
+                            <option value="year">year</option>
+                        </select><br>
                 Amount: <input name="amt" type="number"><br>
                 Remark: <input name="remark" type="text"><br>
                 Tag: <input name="tag" type="text"><br>

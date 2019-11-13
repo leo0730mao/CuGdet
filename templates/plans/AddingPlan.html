@@ -10,7 +10,13 @@ Adding Plan
             <form action="/add_plans" method="post">
                 Starting from: <input name="starting" type="datetime-local"><br>
                 Ending from: <input name="ending" type="datetime-local"><br>
-                Cycle: <input name="cycle" type="text"><br>
+                Cycle: <select name="cycle">
+                            <option value ="week">week</option>
+                            <option value ="month">month</option>
+                            <option value="quarter">quarter</option>
+                            <option value="half-year">half-year</option>
+                            <option value="year">year</option>
+                        </select><br>
                 Budget: <input name="budget" type="number" min="0"><br>
                 <button type="submit">Add</button>
             </form>
