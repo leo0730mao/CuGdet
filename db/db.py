@@ -34,7 +34,7 @@ def select(conn, table, columns, condition, special = ""):
         return res
     except:
         trans.rollback()
-        return None
+        return []
 
 
 def insert(conn, table, data):
@@ -101,7 +101,7 @@ def special_select(sql):
         return res
     except:
         trans.rollback()
-        return None
+        return []
 
 
 conn = connect(name = "proj1part2", usr = "yl4323", host = "35.243.220.243", pwd = "2262")  # 35.243.220.243
