@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Modifing Record
+{% endblock %}
+
+{% block MainContainer %}
+    <div class="container">
+        <div class="col-lg-8">
+            <form action="/modify_record" method="post">
+                Name: {{record['name']}}<input name="name" type="text"><br>
+                Source: {{record['be_from']}}<input name="be_from" type="text"><br>
+                Receiver: {{record['be_to']}}<input name="be_to" type="text"><br>
+                Amount: {{record['amt']}}<input name="amt" type="text"><br>
+                Tag: {{record['tag']}}<input name="tag" type="text"><br>
+                Time: {{record['time']}}<input name="time" type="text"><br>
+                Remark: {{record['remark']}}<input name="remark" type="text"><br>
+                <input name="old_amt" type="hidden" value={{record['amt']}}>
+                <button type="submit">Modify</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}

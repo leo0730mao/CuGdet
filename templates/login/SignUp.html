@@ -12,11 +12,12 @@
 	<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 </head>
 <body>
-    <form action="/login/signup" method="post" style="height: 100%;width:100%;">
+    <form action="/sign_up" method="post" style="height: 100%;width:100%;">
         Username: <input name="username" type="text"><br>
         Password: <input name="password" type="password"><br>
         Email: <input name="email" type="text"><br>
         <button id="submit" type="submit">Sign Up</button>
     </form>
+    {{msg}}
 </body>
 </html>

@@ -1,55 +1,62 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Home Page
+Owned Defaults
 {% endblock %}
 
 {% block MainContainer %}
     <div class="container">
         <div class="col-lg-8">
-            <form action="/adding_record" method="post">
-                Adding a new record
+            <form action="/adding_defaults" method="post">
+                Adding a new defaults
                 <button type="submit">Add</button>
             </form>
         </div>
         <div class="col-lg-8">
-            {% for record in records%}
+            {% for default in defaults%}
             <table class="table">
               <tbody>
                 <tr>
                   <td>Name</td>
-                  <td>{{record['name']}}</td>
+                  <td>{{default['name']}}</td>
                 </tr>
                 <tr>
                   <td>Source</td>
-                  <td>{{record['be_from']}}</td>
+                  <td>{{default['be_from']}}</td>
                 </tr>
                 <tr>
-                  <td>Receiver</td>
-                  <td>{{record['be_to']}}</td>
+                  <td>Receive</td>
+                  <td>{{default['be_to']}}</td>
+                </tr>
+                <tr>
+                  <td>Start at</td>
+                  <td>{{default['starting']}}</td>
+                </tr>
+                <tr>
+                  <td>End at</td>
+                  <td>{{default['ending']}}</td>
+                </tr>
+                <tr>
+                  <td>Cycle</td>
+                  <td>{{default['cycle']}}</td>
                 </tr>
                 <tr>
                   <td>Amount</td>
-                  <td>{{record['amt']}}</td>
-                </tr>
-                <tr>
-                  <td>Tag</td>
-                  <td>{{record['tag']}}</td>
-                </tr>
-                <tr>
-                  <td>Time</td>
-                  <td>{{record['time']}}</td>
+                  <td>{{default['amt']}}</td>
                 </tr>
                 <tr>
                   <td>Remark</td>
-                  <td>{{record['remark']}}</td>
+                  <td>{{default['remark']}}</td>
+                </tr>
+                <tr>
+                  <td>Tag</td>
+                  <td>{{default['tag']}}</td>
                 </tr>
                 <tr>
                   <td>Delete</td>
                   <td>
-                      <form action="/delete_record" method="post">
-                          <input name="reid" type="hidden" value={{record['reid']}}>
-                          <input name="old_amt" type="hidden" value={{record['amt']}}>
+                      <form action="/delete_defaults" method="post">
+                          <input name="did" type="hidden" value={{default['did']}}>
                           <button id="delete" type="submit">Delete</button>
                       </form>
                   </td>
@@ -57,8 +64,8 @@ Home Page
                 <tr>
                   <td>Modify</td>
                   <td>
-                      <form action="/modifing_record" method="post">
-                          <input name="reid" type="hidden" value={{record['reid']}}>
+                      <form action="/modifing_defaults" method="post">
+                          <input name="did" type="hidden" value={{default['did']}}>
                           <button id="modify" type="submit">Modify</button>
                       </form>
                   </td>

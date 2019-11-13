@@ -1,41 +1,12 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Owned Stock</title>
-    <!-- 新 Bootstrap 核心 CSS 文件 -->
-	<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
-	<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
-	<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
-	<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
-	<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-</head>
-<body>
-    <nav class="navbar navbar-inverse">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Cudget</a>
-        </div>
-        <div class="collapse navbar-collapse" id="myNavbar">
-          <ul class="nav navbar-nav">
-            <li class="active"><a href="#">Home Page</a></li>
-            <li><a href="#">Statistic</a></li>
-            <li><a href="#">Stocks</a></li>
-            <li><a href="#">Society</a></li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-    <div>
+{% extends 'base.html' %}
 
-    </div>
-    <div class="container" style="height: 100px;">
-        <div class="col-lg-10" style="background-color: red;  height: 100%">
+{% block title %}
+Owned Stocks
+{% endblock %}
+
+{% block MainContainer %}
+    <div class="container">
+        <div class="col-lg-10">
             {% for stock in own_stocks%}
             <table class="table">
               <tbody>
@@ -49,7 +20,11 @@
                 </tr>
                 <tr>
                   <td>Price</td>
-                  <td>{{stock['price']}}</td>
+                  <td>{{stock['old_price']}}</td>
+                </tr>
+                <tr>
+                  <td>Current Price</td>
+                  <td>{{stock['cur_price']}}</td>
                 </tr>
                 <tr>
                   <td>Number</td>
@@ -58,10 +33,12 @@
                 <tr>
                   <td>Sell</td>
                   <td>
-                      <form action="/buy_stock" method="post">
+                      <form action="/sell_stock" method="post">
                           <input name="sid" type="hidden" value={{stock['sid']}}>
-                          <input name="price" type="hidden" value={{stock['price']}}>
-                          number: <input name="num" type="text">
+                          <input name="old_price" type="hidden" value={{stock['old_price']}}>
+                          <input name="cur_price" type="hidden" value={{stock['cur_price']}}>
+                          <input name="num" type="hidden" value={{stock['num']}}>
+                          number: <input name="sell_num" type="text">
                           <button id="submit" type="submit">sell</button>
                       </form>
                   </td>
@@ -71,5 +48,4 @@
             {% endfor %}
         </div>
     </div>
-</body>
-</html>
+{% endblock %}

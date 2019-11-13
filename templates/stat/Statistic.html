@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}
+Statistic
+{% endblock %}
+
+{% block MainContainer %}
+    <div class="container">
+        <div class="col-lg-10">
+            <div class="bar-chart">
+                <h5 class="bar-title">Distribution of Tags</h5>
+                <canvas id="tag_num" width=100px height=100px></canvas>
+            </div>
+            <div class="bar-chart">
+                <h5 class="bar-title">Distribution of Sources</h5>
+                <canvas id="source_num" width=100px height=100px></canvas>
+            </div>
+            <div class="bar-chart">
+                <h5 class="bar-title">Distribution of Receivers</h5>
+                <canvas id="receiver_num" width=100px height=100px></canvas>
+            </div>
+            <div class="bar-chart">
+                <h5 class="bar-title">Trend of Expenditure(daily)</h5>
+                <canvas id="amt_daily" width=100px height=100px></canvas>
+            </div>
+            <div class="bar-chart">
+                <h5 class="bar-title">Trend of Expenditure(monthly)</h5>
+                <canvas id="amt_monthly" width=100px height=100px></canvas>
+            </div>
+        </div>
+        <script>
+            var data = {{ data | tojson }};
+            drawPie("tag_num", data['tag_num']);
+            drawPie("source_num", data['source_num']);
+            drawPie("receiver_num", data['receiver_num']);
+            drawBar("amt_daily", data['amt_daily'], "# of total amount of daily records", false);
+            drawBar("amt_monthly", data['amt_monthly'], "# of total amount of monthly records", true);
+        </script>
+    </div>
+{% endblock %}

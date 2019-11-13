@@ -1,17 +1,22 @@
 {% extends 'base.html' %}
 
 {% block title %}
-Adding Plan
+Adding Defaults
 {% endblock %}
 
 {% block MainContainer %}
     <div class="container">
         <div class="col-lg-8">
-            <form action="/add_plans" method="post">
+            <form action="/add_defaults" method="post">
+                Name: <input name="name" type="text"><br>
+                Source: <input name="be_from" type="text"><br>
+                Receiver: <input name="be_to" type="text"><br>
                 Starting from: <input name="starting" type="text"><br>
                 Ending from: <input name="ending" type="text"><br>
                 Cycle: <input name="cycle" type="text"><br>
-                Budget: <input name="budget" type="text"><br>
+                Amount: <input name="amt" type="text"><br>
+                Remark: <input name="remark" type="text"><br>
+                Tag: <input name="tag" type="text"><br>
                 <button type="submit">Add</button>
             </form>
         </div>
