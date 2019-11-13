@@ -1,0 +1,39 @@
+{% extends 'base.html' %}
+
+{% block title %}
+RaceRank for {{rname}}
+{% endblock %}
+
+{% block MainContainer %}
+    <div class="container">
+        <div class="col-lg-8">
+            {% for team in ranking%}
+            <table class="table">
+              <tbody>
+                <tr>
+                    <td>{{team['name_1']}}</td>
+                    <td>{{team['name_2']}}</td>
+                    <td>{{team['amt']}}</td>
+                    <td>{{team['rank']}}</td>
+                </tr>
+              </tbody>
+            </table>
+            {% endfor %}
+        </div>
+        <div class="col-lg-8">
+            Your team's ranking
+            {% for team in my_ranking%}
+            <table class="table">
+              <tbody>
+                <tr>
+                    <td>{{team['name_1']}}</td>
+                    <td>{{team['name_2']}}</td>
+                    <td>{{team['amt']}}</td>
+                    <td>{{team['rank']}}</td>
+                </tr>
+              </tbody>
+            </table>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}</html>
