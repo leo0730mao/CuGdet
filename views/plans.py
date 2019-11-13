@@ -57,6 +57,8 @@ def add_plans():
         return redirect(url_for("login.sign_in"))
     plan = {'aid': aid, 'starting': to_valid_time(request.form.get("starting")), 'ending': to_valid_time(request.form.get("ending")),
             'cycle': request.form.get("cycle"), 'budget': request.form.get("budget")}
+    if plan['budget'] == "":
+        return render_template("/plans/AddingPlan.html", msg = "illegal value")
     pids = db.select(conn, 'plans', ['pid'], dict())
     pids = set([t['pid'] for t in pids])
     plan['pid'] = ''.join(random.choice(letters+numbers) for j in range(10))
@@ -108,7 +110,8 @@ def modify_plans():
 
     old_budget = float(request.form.get("old_budget"))
     old_credit = float(request.form.get("old_credit"))
-    plan['credit'] = float(plan['budget']) - (old_budget - old_credit)
+    if plan['budget'] != "":
+        plan['credit'] = float(plan['budget']) - (old_budget - old_credit)
 
     res = db.update(conn, 'plans', {"=": plan}, {'aid': aid})
     if res is False:

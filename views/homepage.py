@@ -171,5 +171,5 @@ def modify_record():
 
         return redirect(url_for(".all_records"))
     else:
-        record = db.select(conn, "records", "*", {'reid': reid})
+        record = db.select(conn, "records", "*", {'reid': reid})[0]
         return render_template("/homepage/ModifyRecord.html", record = record, msg = "illegal value")
