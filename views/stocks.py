@@ -76,12 +76,12 @@ def sell_stock():
     sid = request.form.get('sid')
     old_price = float(request.form.get('old_price'))
     cur_price = float(request.form.get('cur_price'))
-    sell_num = int(request.form.get('sell_num'))
-    num = request.form.get('num')
-    if num == "":
-        return redirect(url_for(".stock_market"))
+    sell_num = request.form.get('sell_num')
+    num = int(request.form.get('num'))
+    if sell_num == "":
+        return redirect(url_for(".own_stock"))
     else:
-        num = int(num)
+        sell_num = int(sell_num)
     if sell_num >= num:
         db.delete(conn, 'own_stk', {'aid': aid, 'sid': request.form.get('sid')})
     else:
