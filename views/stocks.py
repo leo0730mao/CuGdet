@@ -52,10 +52,12 @@ def buy_stock():
     aid = request.cookies.get('aid')
     if aid is None or aid == "":
         return redirect(url_for("login.sign_in"))
-    data = {'aid': aid, 'sid': request.form.get('sid'), 'num': int(request.form.get('num')),
+    data = {'aid': aid, 'sid': request.form.get('sid'), 'num': request.form.get('num'),
             'price': float(request.form.get('price'))}
     if data['num'] == "":
         return redirect(url_for(".stock_market"))
+    else:
+        data['num'] = int(data['num'])
     tmp = db.select(conn, 'own_stk', "*", {'sid': data['sid'], 'aid': aid})
     if len(tmp) == 0:
         db.insert(conn, 'own_stk', data)
@@ -75,9 +77,11 @@ def sell_stock():
     old_price = float(request.form.get('old_price'))
     cur_price = float(request.form.get('cur_price'))
     sell_num = int(request.form.get('sell_num'))
-    num = int(request.form.get('num'))
+    num = request.form.get('num')
     if num == "":
         return redirect(url_for(".stock_market"))
+    else:
+        num = int(num)
     if sell_num >= num:
         db.delete(conn, 'own_stk', {'aid': aid, 'sid': request.form.get('sid')})
     else:
