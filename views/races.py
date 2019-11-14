@@ -32,7 +32,7 @@ def in_races():
         return render_template("/races/Races.html", races=races)
     except:
         trans.rollback()
-        return redirect(url_for('in_races'))
+        return redirect(url_for('races.in_races'))
 
 @races.route('/race_rank', methods=['GET', 'POST'])
 def race_rank():
@@ -126,7 +126,7 @@ def all_races():
         return render_template("/races/AllRaces.html", races=races)
     except:
         trans.rollback()
-        return redirect(url_for('all_races'))
+        return redirect(url_for('races.all_races'))
 
 @races.route('/hot_races', methods=['GET', 'POST'])
 def hot_races():
@@ -164,7 +164,7 @@ participants DESC
         return render_template("/races/HotRaces.html", races=races)
     except:
         trans.rollback()
-        return redirect(url_for('hot_races'))
+        return redirect(url_for('races.hot_races'))
 
 @races.route('/adding_race', methods=['GET', 'POST'])
 def adding_race():

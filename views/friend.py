@@ -54,12 +54,12 @@ def all_friends():
                 logs += cur.fetchall()
             except:
                 transs[-1].rollback()
-                return redirect(url_for("all_friends"))
+                return redirect(url_for("friend.all_friends"))
 
         return render_template("/friend/Friend.html", friends=friends, idx=idx, logs=logs)
     except:
         trans.rollback()
-        return redirect(url_for("all_friends"))
+        return redirect(url_for("friend.all_friends"))
 
 
 @friend.route('/add_friend', methods=['GET', 'POST'])
